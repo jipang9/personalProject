@@ -7,6 +7,7 @@ import miniP.dto.BoardResponseDto;
 import miniP.entity.Board;
 import miniP.exception.BoardDeleteException;
 import miniP.exception.BoardUpdateException;
+import miniP.exception.NotExistMemberException;
 import miniP.exception.PostException;
 import miniP.repository.BoardRepository;
 import org.springframework.stereotype.Service;
@@ -24,11 +25,11 @@ public class BoardService {
     private final BoardRepository boardRepository;
 
     @Transactional
-    public BoardResponseDto save(BoardRequestDto boardRequestDto) throws Exception{
+    public BoardResponseDto save(BoardRequestDto boardRequestDto) throws Exception {
         try {
             Board board = dtoToEntity(boardRequestDto);
             boardRepository.save(board);
-            BoardResponseDto boardResponseDto=entityToDto(board);
+            BoardResponseDto boardResponseDto = entityToDto(board);
             return boardResponseDto;
         } catch (Exception e) {
             e.printStackTrace();
@@ -37,9 +38,14 @@ public class BoardService {
     }
 
     public BoardResponseDto getOne(Long id) {
-        Board board = boardRepository.findById(id).orElseThrow(() -> new RuntimeException("게시물을 찾을 수 없습니다."));
-        BoardResponseDto boardResponseDto = entityToDto(board);
-        return boardResponseDto;
+        try {
+            Board board = boardRepository.findById(id).orElseThrow(() -> new RuntimeException("게시물을 찾을 수 없습니다."));
+            BoardResponseDto boardResponseDto = entityToDto(board);
+            return boardResponseDto;
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+            throw new NotExistMemberException();
+        }
     }
 
     private Board dtoToEntity(BoardRequestDto boardRequestDto) {
@@ -50,7 +56,6 @@ public class BoardService {
                 .content(boardRequestDto.getContent())
                 .title(boardRequestDto.getTitle())
                 .build();
-
         return board;
     }
 
@@ -67,19 +72,15 @@ public class BoardService {
     }
 
     @Transactional
-    public void deleteOne(Long id, String password) {
+    public void deleteOne(Long id) {
         try {
             boardRepository.findById(id).orElseThrow(() -> new RuntimeException("존재하지 않는 게시물입니다."));
-            if (checkByPassword(id, password) == true) {
-                boardRepository.deleteById(id);
-            } else {
-                throw new BoardDeleteException("비밀번호 불일치");
-            }
+            boardRepository.deleteById(id);
         } catch (Exception e) {
             throw new BoardDeleteException();
         }
     }
-
+// 체크 (1. )
     public boolean checkByPassword(Long id, String password) {
         String passwordCheck = boardRepository.findById(id).get().getPassword();
         if (passwordCheck.equals(password)) {
@@ -107,7 +108,8 @@ public class BoardService {
 
     @Transactional(readOnly = true)
     public List<BoardResponseDto> findAll() {
-        List<Board> boardList = boardRepository.findAll();
+//        List<Board> boardList = boardRepository.findAll(Sort.by(Sort.Direction.DESC,"id"));
+        List<Board> boardList = boardRepository.findAllByDateDesc();
         List<BoardResponseDto> boardResponseDtos = new ArrayList<>();
         boardList.forEach(entity -> {
             BoardResponseDto boardResponseDto = entityToDto(entity);
@@ -121,14 +123,13 @@ public class BoardService {
     public BoardResponseDto updateBoard(Long id, BoardRequestDto boardRequestDto) {
         try {
             Board board = boardRepository.findById(id).orElseThrow(() -> new RuntimeException("옼 ㅋ"));
-            if (checkByPassword(id, boardRequestDto.getPassword()) == true) {
-                board.updateBoard(boardRequestDto);
-            }
+            board.updateBoard(boardRequestDto);
             BoardResponseDto boardResponseDto = entityToDto(board);
+//            boardRepository.save(board);///*****************///
+//            throw new BoardUpdateException();
             return boardResponseDto;
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new BoardUpdateException();
-
         }
     }
 }

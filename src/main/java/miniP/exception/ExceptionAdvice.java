@@ -27,4 +27,8 @@ public class ExceptionAdvice {
     @ExceptionHandler(BoardUpdateException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public Result BoardUpdateException(){return responseService.getFailureResult(-103,"수정오류 발생");}
+
+    @ExceptionHandler(NotExistMemberException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public Result NotExistMemberException(){return responseService.getFailureResult(-104,"존재하지 않는 회원");}
 }
