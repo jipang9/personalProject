@@ -33,4 +33,8 @@ public class Board extends BaseEntity{
         this.name = boardRequestDto.getName();
     }
 
+    public boolean checkByPassword(String password){
+        return this.password.equals(password);
+    }
+
 }

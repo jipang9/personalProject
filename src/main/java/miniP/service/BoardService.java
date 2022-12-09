@@ -37,7 +37,7 @@ public class BoardService {
         }
     }
 
-    public BoardResponseDto getOne(Long id) {
+    public BoardResponseDto getOne(Long id) throws Exception{
         try {
             Board board = boardRepository.findById(id).orElseThrow(() -> new RuntimeException("게시물을 찾을 수 없습니다."));
             BoardResponseDto boardResponseDto = entityToDto(board);
@@ -72,43 +72,23 @@ public class BoardService {
     }
 
     @Transactional
-    public void deleteOne(Long id) {
+    public void deleteOne(Long id, String password) {
         try {
-            boardRepository.findById(id).orElseThrow(() -> new RuntimeException("존재하지 않는 게시물입니다."));
-            boardRepository.deleteById(id);
+            Board board = boardRepository.findById(id).orElseThrow(() -> new RuntimeException("존재하지 않는 게시물입니다."));
+            if (board.checkByPassword(password))
+                boardRepository.deleteById(id);
+            else{
+                throw new BoardUpdateException("비밀번호 불일치");
+            }
         } catch (Exception e) {
+            e.printStackTrace();
             throw new BoardDeleteException();
         }
     }
-// 체크 (1. )
-    public boolean checkByPassword(Long id, String password) {
-        String passwordCheck = boardRepository.findById(id).get().getPassword();
-        if (passwordCheck.equals(password)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-//    @Transactional
-//    public BoardRequestDto modify(Long id, String password, BoardRequestDto boardRequestDto) {
-//        try {
-//            Board board = boardRepository.findById(id).orElseThrow(() -> new RuntimeException("ID가 존재하지 않습니다."));
-//            if (checkByPassword(id, password) == true) {
-//                board.changeTitleAndContentAndName(boardRequestDto.getTitle(), board.getContent(), boardRequestDto.getName());
-//                return boardRequestDto;
-//            } else {
-//                throw new BoardDeleteException("비밀번호 불일치");
-//            }
-//        } catch (Exception e) {
-//            throw new BoardUpdateException();
-//        }
-//    }
-
 
     @Transactional(readOnly = true)
     public List<BoardResponseDto> findAll() {
-//        List<Board> boardList = boardRepository.findAll(Sort.by(Sort.Direction.DESC,"id"));
+        // 1). 직접 @Query 사용해서 만들수 있음, 2).단어 조합하면 알아서 만들어 줌, 3).Sort 메서드 이용 가능
         List<Board> boardList = boardRepository.findAllByDateDesc();
         List<BoardResponseDto> boardResponseDtos = new ArrayList<>();
         boardList.forEach(entity -> {
@@ -118,17 +98,20 @@ public class BoardService {
         return boardResponseDtos;
     }
 
-
     @Transactional
     public BoardResponseDto updateBoard(Long id, BoardRequestDto boardRequestDto) {
         try {
-            Board board = boardRepository.findById(id).orElseThrow(() -> new RuntimeException("옼 ㅋ"));
-            board.updateBoard(boardRequestDto);
-            BoardResponseDto boardResponseDto = entityToDto(board);
-//            boardRepository.save(board);///*****************///
-//            throw new BoardUpdateException();
-            return boardResponseDto;
+            Board board = boardRepository.findById(id).orElseThrow(() -> new RuntimeException("존재하지 않는 id"));
+            if(board.checkByPassword(boardRequestDto.getPassword())) {
+                board.updateBoard(boardRequestDto);
+                BoardResponseDto boardResponseDto = entityToDto(board);
+                boardRepository.save(board);
+                return boardResponseDto;
+            }else{
+                throw new BoardUpdateException("비밀번호가 일치하지 않습니다.");
+            }
         } catch (Exception e) {
+            e.printStackTrace();
             throw new BoardUpdateException();
         }
     }
