@@ -1,7 +1,7 @@
 package miniP.entity;
 
 import lombok.*;
-import miniP.dto.BoardRequestDto;
+import miniP.dto.board.BoardRequestDto;
 
 import javax.persistence.*;
 
@@ -17,24 +17,25 @@ public class Board extends BaseEntity{
     @Column(name="board_id")
     private Long id;
 
-    private String title;
 
+    // 글 제목
+    private String title;
+    // 내용
     private String content;
 
-    @Column(name="user_name")
-    private String name;
 
-    @Column(name="user_password")
-    private String password;
+    // 작성자 -> pk값 만 가지고 올 것임
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="member_id")
+    private Member member;
 
     public void updateBoard(BoardRequestDto boardRequestDto){
         this.title = boardRequestDto.getTitle();
         this.content = boardRequestDto.getContent();
-        this.name = boardRequestDto.getName();
     }
 
     public boolean checkByPassword(String password){
-        return this.password.equals(password);
+        return this.member.getPassword().equals(password);
     }
 
 }

@@ -1,4 +1,4 @@
-package miniP.dto;
+package miniP.dto.board;
 
 
 import lombok.*;
