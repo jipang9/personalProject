@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import miniP.repository.MemberRepository;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -30,13 +31,11 @@ public class Member {
     @OneToMany(mappedBy = "member")
     private List<Board> boardList = new ArrayList<>();
 
-    public boolean CheckByExistUser(String username){
-        return this.username.equals(username);
-    }
 
     @Builder
     public Member(String username, String password) {
         this.username = username;
         this.password = password;
     }
+
 }

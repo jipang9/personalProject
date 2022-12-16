@@ -1,19 +1,16 @@
 package miniP.dto.board;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class BoardResponseDto {
 
     private String title;
     private String content;
-    private String name;
+    private String username;
     private LocalDateTime createTime;
     private LocalDateTime modDateTime;
 
@@ -21,9 +18,10 @@ public class BoardResponseDto {
     public BoardResponseDto(String title, String content, String name, LocalDateTime createDate, LocalDateTime modDateTime) {
         this.title = title;
         this.content = content;
-        this.name = name;
+        this.username = name;
         this.createTime = createDate;
         this.modDateTime = modDateTime;
     }
+
 
 }

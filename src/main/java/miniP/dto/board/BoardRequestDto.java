@@ -1,26 +1,25 @@
 package miniP.dto.board;
-
-
 import lombok.*;
+import miniP.entity.Board;
+import miniP.entity.Member;
 
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@NoArgsConstructor
 public class BoardRequestDto {
 
     private String title;
     private String content;
-    private String name;
-    private String password;
 
 
-    @Builder
-    public BoardRequestDto(String title, String content, String name, String password) {
-        this.title = title;
-        this.content = content;
-        this.name = name;
-        this.password = password;
+    public Board toEntity(BoardRequestDto boardRequestDto, Member member){
+        Board board = Board.builder()
+                .content(boardRequestDto.getContent())
+                .title(boardRequestDto.getTitle())
+                .member(member)
+                .build();
+        return board;
     }
-
 
 }
