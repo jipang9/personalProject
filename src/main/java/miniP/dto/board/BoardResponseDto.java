@@ -1,27 +1,30 @@
 package miniP.dto.board;
 
 import lombok.*;
+import miniP.entity.Board;
 
 import java.time.LocalDateTime;
 
 @Getter
-@NoArgsConstructor
+@RequiredArgsConstructor
+@Builder
 public class BoardResponseDto {
 
-    private String title;
-    private String content;
-    private String username;
-    private LocalDateTime createTime;
-    private LocalDateTime modDateTime;
+    private final String title;
+    private final String content;
+    private final String username;
+    private final LocalDateTime createTime;
+    private final LocalDateTime modDateTime;
 
-    @Builder
-    public BoardResponseDto(String title, String content, String name, LocalDateTime createDate, LocalDateTime modDateTime) {
-        this.title = title;
-        this.content = content;
-        this.username = name;
-        this.createTime = createDate;
-        this.modDateTime = modDateTime;
+    public  static BoardResponseDto toDto(Board board){
+        BoardResponseDto boardResponseDto = BoardResponseDto.builder()
+                .title(board.getTitle())
+                .content(board.getContent())
+                .username(board.getMember().getUsername())
+                .createTime(board.getCreateDate())
+                .modDateTime(board.getModDate())
+                .build();
+        return boardResponseDto;
     }
-
 
 }

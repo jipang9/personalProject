@@ -20,10 +20,13 @@ public class MemberRequestDto {
     private String password;
 
 
+
     public Member toEntity(MemberRequestDto memberRequestDto){
         return Member.builder()
                 .username(memberRequestDto.getUsername())
                 .password(memberRequestDto.getPassword())
                 .build();
     }
+
+
 }

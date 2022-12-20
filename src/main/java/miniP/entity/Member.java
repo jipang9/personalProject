@@ -1,11 +1,7 @@
 package miniP.entity;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import miniP.repository.MemberRepository;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -22,10 +18,8 @@ public class Member {
     @Column(name = "member_id")
     private Long id;
 
-    // 사용자 이름
     private String username;
 
-    // 사용자 비밀번호
     private String password;
 
     @OneToMany(mappedBy = "member")

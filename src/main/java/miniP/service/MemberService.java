@@ -47,10 +47,10 @@ public class MemberService {
             throw new MemberExistException("이미 등록된 사용자입니다");
     }
 
-
     // 로그인 하고자 하는 사용자의 username과 password를 body로 받는다.
     // -> 로그인 성공 시 유저의 정보를 활용해 JWT 토큰 발급 -> 이 토큰을 Headers에 추가 -> 성공에 대한 메시지와 상태코드 반환
     // 지금 사용자의 비밀번호 검증 로직을 login속에 넣었는데, 나중에 뭐 사용자의 정보를 수정한다던지 사용할 일이 생기면 그때는 또 분리해야함.
+
     @Transactional
     public MemberLoginResponse login(MemberRequestDto memberRegisterDto, HttpServletResponse httpServletResponse)throws RuntimeException {
         try{
@@ -66,4 +66,6 @@ public class MemberService {
             throw new LoginFailureException();
         }
     }
+
+
 }

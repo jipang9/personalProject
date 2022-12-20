@@ -1,10 +1,13 @@
 package miniP.entity;
 
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import miniP.dto.board.BoardRequestDto;
 import miniP.dto.board.BoardResponseDto;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Getter
@@ -18,9 +21,10 @@ public class Board extends BaseEntity{
     @Column(name="board_id")
     private Long id;
 
+    @NotNull
     private String title;
+    @NotNull
     private String content;
-
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="member_id")
@@ -31,12 +35,13 @@ public class Board extends BaseEntity{
         this.content = boardRequestDto.getContent();
     }
 
-    public BoardResponseDto toDto(Board board){
+
+    public  BoardResponseDto toDto(Board board){
         BoardResponseDto boardResponseDto = BoardResponseDto.builder()
-                .content(board.getContent())
                 .title(board.getTitle())
-                .name(board.getMember().getUsername())
-                .createDate(board.getCreateDate())
+                .content(board.getContent())
+                .username(board.getMember().getUsername())
+                .createTime(board.getCreateDate())
                 .modDateTime(board.getModDate())
                 .build();
         return boardResponseDto;

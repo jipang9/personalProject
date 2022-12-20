@@ -3,20 +3,20 @@ import lombok.*;
 import miniP.entity.Board;
 import miniP.entity.Member;
 
-
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor
+@RequiredArgsConstructor
 public class BoardRequestDto {
 
-    private String title;
-    private String content;
+    private final String title;
+    private final String content;
+
+    // 이게 정답일까여?
 
 
-    public Board toEntity(BoardRequestDto boardRequestDto, Member member){
+    public static Board toEntity(BoardRequestDto boardRequestDto, Member member){
         Board board = Board.builder()
-                .content(boardRequestDto.getContent())
                 .title(boardRequestDto.getTitle())
+                .content(boardRequestDto.getContent())
                 .member(member)
                 .build();
         return board;
