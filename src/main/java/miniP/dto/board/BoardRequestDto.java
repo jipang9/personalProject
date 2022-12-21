@@ -5,18 +5,17 @@ import miniP.entity.Member;
 
 @Getter
 @RequiredArgsConstructor
+@NoArgsConstructor(force = true)
 public class BoardRequestDto {
 
     private final String title;
     private final String content;
 
-    // 이게 정답일까여?
 
-
-    public static Board toEntity(BoardRequestDto boardRequestDto, Member member){
+    public Board toEntity(Member member){
         Board board = Board.builder()
-                .title(boardRequestDto.getTitle())
-                .content(boardRequestDto.getContent())
+                .title(this.getTitle())
+                .content(this.getContent())
                 .member(member)
                 .build();
         return board;

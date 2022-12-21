@@ -5,7 +5,11 @@ import miniP.exception.board.BoardDeleteException;
 import miniP.exception.board.BoardSaveException;
 import miniP.exception.board.BoardUpdateException;
 import miniP.exception.board.NotFoundBoardException;
+import miniP.exception.comment.CommentUpdateException;
+import miniP.exception.comment.FailPostComment;
+import miniP.exception.comment.NotFoundCommentException;
 import miniP.exception.login.LoginFailureException;
+import miniP.exception.member.IsNotWriterException;
 import miniP.exception.member.NotMemberSaveException;
 import miniP.service.ResponseService;
 import miniP.service.result.Result;
@@ -68,5 +72,30 @@ public class ExceptionAdvice {
     public Result NotFoundBoardException() {
         return responseService.getFailureResult(-402,  " 해당 게시물이 존재하지 않습니다 ");
     }
+
+    @ExceptionHandler(IsNotWriterException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Result IsNotWriterException() {
+        return responseService.getFailureResult(-403,  " 해당 게시물에 권한이 없습니다. ");
+    }
+
+    @ExceptionHandler(FailPostComment.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Result FailPostComment() {
+        return responseService.getFailureResult(-405, "댓글 작성 실패");
+    }
+
+    @ExceptionHandler(NotFoundCommentException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Result NotFoundCommentException() {
+        return responseService.getFailureResult(-406, "해당 댓글이 존재하지 않습니다");
+    }
+
+    @ExceptionHandler(CommentUpdateException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Result CommentUpdateException() {
+        return responseService.getFailureResult(-407, "댓글 수정 실패");
+    }
+
 
 }

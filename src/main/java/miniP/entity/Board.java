@@ -5,14 +5,16 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import miniP.dto.board.BoardRequestDto;
 import miniP.dto.board.BoardResponseDto;
+import miniP.exception.member.IsNotWriterException;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Builder
 @AllArgsConstructor
 public class Board extends BaseEntity{
 
@@ -30,21 +32,27 @@ public class Board extends BaseEntity{
     @JoinColumn(name="member_id")
     private Member member;
 
+    @Builder
+    public Board(Long id, String title, String content, Member member) {
+        this.id = id;
+        this.title = title;
+        this.content = content;
+        this.member = member;
+    }
+
+    @OneToMany(mappedBy = "board",cascade = CascadeType.REMOVE)
+    private List<Comment> comments = new ArrayList<>();
+
     public void updateBoard(BoardRequestDto boardRequestDto){
         this.title = boardRequestDto.getTitle();
         this.content = boardRequestDto.getContent();
     }
 
-
-    public  BoardResponseDto toDto(Board board){
-        BoardResponseDto boardResponseDto = BoardResponseDto.builder()
-                .title(board.getTitle())
-                .content(board.getContent())
-                .username(board.getMember().getUsername())
-                .createTime(board.getCreateDate())
-                .modDateTime(board.getModDate())
-                .build();
-        return boardResponseDto;
+    public void isWrite(Board board,String username) throws RuntimeException{
+        if(board.getMember().getUsername().equals(username))
+            return;
+        else
+            throw new IsNotWriterException();
     }
 
 }
