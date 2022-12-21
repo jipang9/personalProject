@@ -1,10 +1,8 @@
 package miniP.entity;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import miniP.dto.board.BoardRequestDto;
-import miniP.dto.board.BoardResponseDto;
 import miniP.exception.member.IsNotWriterException;
 
 import javax.persistence.*;
@@ -16,6 +14,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Builder
 public class Board extends BaseEntity{
 
     @Id
@@ -31,14 +30,6 @@ public class Board extends BaseEntity{
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="member_id")
     private Member member;
-
-    @Builder
-    public Board(Long id, String title, String content, Member member) {
-        this.id = id;
-        this.title = title;
-        this.content = content;
-        this.member = member;
-    }
 
     @OneToMany(mappedBy = "board",cascade = CascadeType.REMOVE)
     private List<Comment> comments = new ArrayList<>();

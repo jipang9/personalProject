@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import miniP.dto.board.BoardRequestDto;
 import miniP.dto.board.BoardResponseDto;
 import miniP.entity.Board;
+import miniP.entity.Comment;
 import miniP.entity.Member;
 import miniP.exception.board.BoardDeleteException;
 import miniP.exception.board.BoardSaveException;
@@ -12,6 +13,7 @@ import miniP.exception.board.BoardUpdateException;
 import miniP.exception.board.NotFoundBoardException;
 import miniP.jwt.JwtUtil;
 import miniP.repository.BoardRepository;
+import miniP.repository.CommentRepository;
 import miniP.repository.MemberRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +30,7 @@ public class BoardService {
 
     private final BoardRepository boardRepository;
     private final MemberRepository memberRepository;
+    private final CommentRepository commentRepository;
     private final JwtUtil jwtUtil;
 
     @Transactional    // 게시글 저장
@@ -49,6 +52,7 @@ public class BoardService {
             Board getBoard = boardRepository.findById(id).orElseThrow(() -> new RuntimeException(" 게시물을 찾을 수 없습니다 "));
             return BoardResponseDto.of(getBoard);
         } catch (RuntimeException e) {
+            e.printStackTrace();
             throw new NotFoundBoardException();
         }
     }

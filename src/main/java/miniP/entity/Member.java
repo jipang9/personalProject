@@ -19,11 +19,7 @@ public class Member {
     private Long id;
 
     private String username;
-
     private String password;
-
-    @OneToMany(mappedBy = "member")
-    private List<Board> boardList = new ArrayList<>();
 
 
     @Builder
