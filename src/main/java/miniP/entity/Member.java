@@ -2,10 +2,10 @@ package miniP.entity;
 
 
 import lombok.*;
+import miniP.dto.member.RegisterRequestDto;
+import miniP.exception.login.LoginFailureException;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -28,4 +28,10 @@ public class Member {
         this.password = password;
     }
 
+    public void checkByPassword(Member member, RegisterRequestDto memberRegisterDto) {
+        if(member.getPassword().equals(memberRegisterDto.getPassword()))
+            return ;
+        else
+            throw new LoginFailureException();
+    }
 }

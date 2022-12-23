@@ -1,6 +1,5 @@
 package miniP.entity;
 
-
 import lombok.*;
 import miniP.dto.board.BoardRequestDto;
 import miniP.exception.member.IsNotWriterException;
@@ -15,11 +14,11 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class Board extends BaseEntity{
+public class Board extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="board_id")
+    @Column(name = "board_id")
     private Long id;
 
     @NotNull
@@ -28,19 +27,19 @@ public class Board extends BaseEntity{
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="member_id")
+    @JoinColumn(name = "member_id")
     private Member member;
 
-    @OneToMany(mappedBy = "board",cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
     private List<Comment> comments = new ArrayList<>();
 
-    public void updateBoard(BoardRequestDto boardRequestDto){
+    public void updateBoard(BoardRequestDto boardRequestDto) {
         this.title = boardRequestDto.getTitle();
         this.content = boardRequestDto.getContent();
     }
 
-    public void isWrite(Board board,String username) throws RuntimeException{
-        if(board.getMember().getUsername().equals(username))
+    public void isWrite(Board board, String username) throws RuntimeException {
+        if (board.getMember().getUsername().equals(username))
             return;
         else
             throw new IsNotWriterException();

@@ -32,44 +32,29 @@ public class CommentService {
 
     @Transactional
     public CommentResponseDto postComment(Long BoardId, CommentRequestDto commentRequestDto, HttpServletRequest request) {
-        try {
-            String user = jwtUtil.validateToken(request);
-            Member member = memberRepository.findByUsername(user).orElseThrow(() -> new NotExistMemberException());
-            Board board = boardRepository.findById(BoardId).orElseThrow(() -> new NotFoundBoardException());
-            Comment comment = commentRequestDto.toEntity(board, member);
-            commentRepository.save(comment);
-            return CommentResponseDto.of(comment);
-        } catch (RuntimeException e) {
-            e.printStackTrace();
-            throw new FailPostComment();
-        }
+        String user = jwtUtil.validateToken(request);
+        Member member = memberRepository.findByUsername(user).orElseThrow(() -> new NotExistMemberException());
+        Board board = boardRepository.findById(BoardId).orElseThrow(() -> new NotFoundBoardException());
+        Comment comment = commentRequestDto.toEntity(board, member);
+        commentRepository.save(comment);
+        return CommentResponseDto.of(comment);
     }
 
     @Transactional
     public void deleteOne(Long id, HttpServletRequest request) {
-        try {
-            Comment comment = commentRepository.findById(id).orElseThrow(() -> new NotFoundCommentException());
-            String user = jwtUtil.validateToken(request);
-            comment.isWrite(comment, user);
-            commentRepository.delete(comment);
-        } catch (RuntimeException e) {
-            e.printStackTrace();
-            throw new CommentDeleteException();
-        }
+        Comment comment = commentRepository.findById(id).orElseThrow(() -> new NotFoundCommentException());
+        String user = jwtUtil.validateToken(request);
+        comment.isWrite(comment, user);
+        commentRepository.delete(comment);
     }
 
     @Transactional
     public CommentResponseDto modifyComment(Long id, CommentRequestDto commentRequestDto, HttpServletRequest httpServletRequest) {
-        try {
-            Comment comment = commentRepository.findById(id).orElseThrow(() -> new NotFoundCommentException());
-            String user = jwtUtil.validateToken(httpServletRequest);
-            comment.isWrite(comment, user);
-            comment.updateComment(commentRequestDto);
-            commentRepository.save(comment);
-            return CommentResponseDto.of(comment);
-        } catch (RuntimeException e) {
-            e.printStackTrace();
-            throw new CommentUpdateException();
-        }
+        Comment comment = commentRepository.findById(id).orElseThrow(() -> new NotFoundCommentException());
+        String user = jwtUtil.validateToken(httpServletRequest);
+        comment.isWrite(comment, user);
+        comment.updateComment(commentRequestDto);
+        commentRepository.save(comment);
+        return CommentResponseDto.of(comment);
     }
 }

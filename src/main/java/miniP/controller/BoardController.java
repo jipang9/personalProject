@@ -16,12 +16,12 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/board")
+@RequestMapping("/boards")
 public class BoardController {
 
     private final BoardService boardService;
 
-    @PostMapping("/save")
+    @PostMapping("/posts")
     public ResponseEntity<BoardResponseDto> save(@Valid @RequestBody BoardRequestDto boardRequestDto, HttpServletRequest request) {
         return ResponseEntity.status(201).body(boardService.save(boardRequestDto, request));
     }

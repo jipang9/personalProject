@@ -7,24 +7,24 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor
-public class MemberRequestDto {
+@RequiredArgsConstructor
+@NoArgsConstructor(force = true)
+public final class RegisterRequestDto {
 
     @Size(min = 4, max = 10)
     @Pattern(regexp = "^[a-z0-9]*$")
-    private String username;
+    private final String username;
 
     @Size(min = 4, max = 10)
     @Pattern(regexp = "^[a-zA-Z0-9]*$")
-    private String password;
+    private final String password;
 
 
 
-    public Member toEntity(MemberRequestDto memberRequestDto){
+    public Member toEntity(String  password){
         return Member.builder()
-                .username(memberRequestDto.getUsername())
-                .password(memberRequestDto.getPassword())
+                .username(this.getUsername())
+                .password(password)
                 .build();
     }
 

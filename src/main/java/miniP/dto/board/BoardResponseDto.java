@@ -23,7 +23,6 @@ public class BoardResponseDto {
     private final LocalDateTime modDateTime;
 
     public BoardResponseDto(Board board) {
-
         this.id= board.getId();
         this.title = board.getTitle();
         this.content = board.getContent();
@@ -32,6 +31,9 @@ public class BoardResponseDto {
         this.modDateTime = board.getModDate();
         this.comment = board.getComments().stream().map(CommentResponseDto::of).collect(Collectors.toList());
     }
+
+
+
     public static BoardResponseDto of(Board board){
         return new BoardResponseDto(board);
     }
