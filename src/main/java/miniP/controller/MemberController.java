@@ -31,7 +31,7 @@ public class MemberController {
 
     @PostMapping("/login")
     public SingleResult<RegisterResponseDto> loginMember(@RequestBody RegisterRequestDto registerRequestDto){
-        RegisterResponseDto data =memberService.login(registerRequestDto);
+        RegisterResponseDto data =memberService.loginMember(registerRequestDto);
         return responseService.getSingleResult(data);
     }
 

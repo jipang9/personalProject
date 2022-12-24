@@ -2,16 +2,18 @@ package miniP.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import miniP.dto.member.RegisterResponseDto;
 import miniP.dto.member.RegisterRequestDto;
+import miniP.dto.member.RegisterResponseDto;
 import miniP.entity.Member;
+import miniP.exception.NotExistMemberException;
+import miniP.exception.login.LoginFailureException;
 import miniP.exception.member.MemberExistException;
-import miniP.jwt.JwtUtil;
+import miniP.jwt.JwtTokenProvider;
 import miniP.repository.MemberRepository;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.servlet.http.HttpServletResponse;
 
 @Service
 @Transactional(readOnly = true)
@@ -22,15 +24,15 @@ public class MemberService {
     private final JwtTokenProvider jwtTokenProvider;
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
-    private final AuthenticationManagerBuilder authenticationManagerBuilder
 
 
     // 회원가입
     @Transactional
     public void registerMember(RegisterRequestDto registerRequestDto) throws RuntimeException {
         validateDuplicatedMember(registerRequestDto.getUsername());
-        Member member = registerRequestDto.toEntity(registerRequestDto);
+        Member member = registerRequestDto.toEntity(passwordEncoder.encode(registerRequestDto.getPassword()));
         memberRepository.save(member);
+        log.info(member.getUsername(),member.getPassword(),member.getRole());
     }
 
     private void validateDuplicatedMember(String username) throws RuntimeException {
@@ -40,10 +42,13 @@ public class MemberService {
 
 
     @Transactional
-    public RegisterResponseDto login(RegisterRequestDto memberRegisterDto, HttpServletResponse httpServletResponse) {
-            Member member = memberRepository.findByUsername(memberRegisterDto.getUsername()).orElseThrow(() -> new IllegalArgumentException("사용자 존재 x"));
-            member.checkByPassword(member, memberRegisterDto);
-            httpServletResponse.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtTokenProvider.createToken(member.getUsername()));
-            return new RegisterResponseDto(memberRegisterDto.getUsername(), jwtTokenProvider.createToken(member.getUsername()));
-        }
+    public RegisterResponseDto loginMember(RegisterRequestDto registerRequestDto){
+        Member member = memberRepository.findByUsername(registerRequestDto.getUsername()).orElseThrow(()-> new NotExistMemberException());
+        if(!passwordEncoder.matches(registerRequestDto.getPassword(), member.getPassword()))
+            throw new LoginFailureException();
+        member.updateRefreshToken(jwtTokenProvider.createRefreshToken());
+        return RegisterResponseDto.of(member,jwtTokenProvider.createToken(registerRequestDto.getUsername()));
+    }
+
+
     }

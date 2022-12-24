@@ -18,20 +18,20 @@ public class CommentController {
     private final CommentService commentService;
 
     @PostMapping("/{id}")
-    public ResponseEntity<CommentResponseDto>postComment(@PathVariable Long id, @RequestBody CommentRequestDto commentRequestDto, HttpServletRequest request){
-        CommentResponseDto resultData=commentService.postComment(id, commentRequestDto, request);
+    public ResponseEntity<CommentResponseDto>postComment(@PathVariable Long id, @RequestBody CommentRequestDto commentRequestDto){
+        CommentResponseDto resultData=commentService.postComment(id, commentRequestDto);
         return ResponseEntity.status(201).body(resultData);
     }
 
     @DeleteMapping("/{id}")
     public HttpStatus deleteComment(@PathVariable("id") Long id,HttpServletRequest request){
-        commentService.deleteOne(id,request);
+        commentService.deleteOne(id);
         return HttpStatus.OK;
     }
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<CommentResponseDto> modifyComment(@PathVariable Long id, @RequestBody CommentRequestDto commentRequestDto, HttpServletRequest httpServletRequest){
-        return ResponseEntity.status(201).body(commentService.modifyComment(id, commentRequestDto, httpServletRequest));
+    public ResponseEntity<CommentResponseDto> modifyComment(@PathVariable Long id, @RequestBody CommentRequestDto commentRequestDto){
+        return ResponseEntity.status(201).body(commentService.modifyComment(id, commentRequestDto));
     }
 }

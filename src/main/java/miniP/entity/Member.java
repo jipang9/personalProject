@@ -6,6 +6,9 @@ import miniP.dto.member.RegisterRequestDto;
 import miniP.exception.login.LoginFailureException;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @Entity
 @Getter
@@ -22,16 +25,25 @@ public class Member {
     private String password;
 
 
+    private String refreshToken;
+
+    @ElementCollection(fetch = FetchType.LAZY)
+    @Enumerated(EnumType.STRING)
+    private List<RoleType> role = new ArrayList<>();
+
+
     @Builder
-    public Member(String username, String password) {
+    public Member(String username, String password, List<RoleType> role) {
         this.username = username;
         this.password = password;
+        this.role= Collections.singletonList(RoleType.ROLE_USER);
     }
 
-    public void checkByPassword(Member member, RegisterRequestDto memberRegisterDto) {
-        if(member.getPassword().equals(memberRegisterDto.getPassword()))
-            return ;
-        else
-            throw new LoginFailureException();
+    public void addRole(RoleType roleType){
+        this.role.add(roleType);
+    }
+
+    public void updateRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
     }
 }

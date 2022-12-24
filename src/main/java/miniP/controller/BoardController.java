@@ -22,8 +22,8 @@ public class BoardController {
     private final BoardService boardService;
 
     @PostMapping("/posts")
-    public ResponseEntity<BoardResponseDto> save(@Valid @RequestBody BoardRequestDto boardRequestDto, HttpServletRequest request) {
-        return ResponseEntity.status(201).body(boardService.save(boardRequestDto, request));
+    public ResponseEntity<BoardResponseDto> save(@Valid @RequestBody BoardRequestDto boardRequestDto) {
+        return ResponseEntity.status(201).body(boardService.save(boardRequestDto));
     }
 
     @GetMapping("/get/{id}")
@@ -33,14 +33,14 @@ public class BoardController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public HttpStatus deleteOne(@PathVariable("id") Long id, HttpServletRequest request) {
-        boardService.deleteOne(id,request);
+    public HttpStatus deleteOne(@PathVariable("id") Long id) {
+        boardService.deleteOne(id);
         return HttpStatus.OK;
     }
 
     @PutMapping("/modify/{id}")
-    public ResponseEntity<BoardResponseDto> updateBoard(@PathVariable("id") Long id, @RequestBody BoardRequestDto boardRequestDto, HttpServletRequest request) {
-        BoardResponseDto data = boardService.updateBoard(id, boardRequestDto,request);
+    public ResponseEntity<BoardResponseDto> updateBoard(@PathVariable("id") Long id, @RequestBody BoardRequestDto boardRequestDto) {
+        BoardResponseDto data = boardService.updateBoard(id, boardRequestDto);
         return ResponseEntity.status(201).body(data);
     }
 

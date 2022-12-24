@@ -5,16 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import miniP.dto.board.BoardRequestDto;
 import miniP.dto.board.BoardResponseDto;
 import miniP.entity.Board;
-import miniP.entity.Comment;
 import miniP.entity.Member;
-import miniP.exception.board.BoardDeleteException;
-import miniP.exception.board.BoardSaveException;
-import miniP.exception.board.BoardUpdateException;
 import miniP.exception.board.NotFoundBoardException;
-import miniP.jwt.JwtUtil;
+import miniP.jwt.SecurityUtil;
 import miniP.repository.BoardRepository;
-import miniP.repository.CommentRepository;
 import miniP.repository.MemberRepository;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,12 +26,12 @@ public class BoardService {
 
     private final BoardRepository boardRepository;
     private final MemberRepository memberRepository;
-    private final JwtUtil jwtUtil;
 
     @Transactional    // 게시글 저장
-    public BoardResponseDto save(BoardRequestDto boardRequestDto, HttpServletRequest request) {
-        String username = jwtUtil.validateToken(request);
-        Member member = memberRepository.findByUsername(username).orElseThrow(() -> new IllegalArgumentException("사용자가 존재하지 않습니다"));
+    public BoardResponseDto save(BoardRequestDto boardRequestDto) {
+        String getUserName = SecurityUtil.getCurrentMemberEmail();
+        Member member = memberRepository.findByUsername(getUserName).orElseThrow(() -> new IllegalArgumentException("사용자가 존재하지 않습니다"));
+
         Board board = boardRequestDto.toEntity(member);
         boardRepository.save(board);
         return BoardResponseDto.of(board);
@@ -48,12 +44,11 @@ public class BoardService {
     }
 
     @Transactional // 게시물 삭제
-    public void deleteOne(Long id, HttpServletRequest request) {
+    public void deleteOne(Long id) {
+        String getUserName = SecurityUtil.getCurrentMemberEmail();
         Board board = boardRepository.findById(id).orElseThrow(() -> new NotFoundBoardException(" 게시물을 찾을 수 없습니다 "));
-        String username = jwtUtil.validateToken(request);
-        board.isWrite(board, username);
+        board.isWrite(board, getUserName);
         boardRepository.deleteById(id);
-
     }
 
     @Transactional(readOnly = true) // 전체 조회
@@ -68,10 +63,10 @@ public class BoardService {
     }
 
     @Transactional //    게시물 수정
-    public BoardResponseDto updateBoard(Long id, BoardRequestDto boardRequestDto, HttpServletRequest request) {
+    public BoardResponseDto updateBoard(Long id, BoardRequestDto boardRequestDto) {
         Board board = boardRepository.findById(id).orElseThrow(() -> new RuntimeException(" 존재하지 않는 게시물 "));
-        String username = jwtUtil.validateToken(request);
-        board.isWrite(board, username);
+        String getUserName = SecurityUtil.getCurrentMemberEmail();
+        board.isWrite(board, getUserName);
         board.updateBoard(boardRequestDto);
         boardRepository.save(board);
         return BoardResponseDto.of(board);
