@@ -32,7 +32,7 @@ public class MemberService {
         validateDuplicatedMember(registerRequestDto.getUsername());
         Member member = registerRequestDto.toEntity(passwordEncoder.encode(registerRequestDto.getPassword()));
         memberRepository.save(member);
-        log.info(member.getUsername(),member.getPassword(),member.getRole());
+        log.info(member.getUsername(), member.getPassword(), member.getRole());
     }
 
     private void validateDuplicatedMember(String username) throws RuntimeException {
@@ -42,13 +42,11 @@ public class MemberService {
 
 
     @Transactional
-    public RegisterResponseDto loginMember(RegisterRequestDto registerRequestDto){
-        Member member = memberRepository.findByUsername(registerRequestDto.getUsername()).orElseThrow(()-> new NotExistMemberException());
-        if(!passwordEncoder.matches(registerRequestDto.getPassword(), member.getPassword()))
+    public RegisterResponseDto loginMember(RegisterRequestDto registerRequestDto) {
+        Member member = memberRepository.findByUsername(registerRequestDto.getUsername()).orElseThrow(() -> new NotExistMemberException());
+        if (!passwordEncoder.matches(registerRequestDto.getPassword(), member.getPassword()))
             throw new LoginFailureException();
         member.updateRefreshToken(jwtTokenProvider.createRefreshToken());
-        return RegisterResponseDto.of(member,jwtTokenProvider.createToken(registerRequestDto.getUsername()));
+        return RegisterResponseDto.of(member, jwtTokenProvider.createToken(registerRequestDto.getUsername()));
     }
-
-
-    }
+}

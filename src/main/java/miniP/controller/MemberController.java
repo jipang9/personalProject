@@ -16,14 +16,14 @@ import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/sign")
+@RequestMapping("/api/member")
 public class MemberController {
 
     private final MemberService memberService;
     private final ResponseService responseService;
 
 
-    @PostMapping("/register")
+    @PostMapping("/signup")
     public SingleResult registerMember(@RequestBody @Valid RegisterRequestDto registerRequestDto) {
          memberService.registerMember(registerRequestDto);
         return responseService.getSingleResult(HttpStatus.valueOf(201));

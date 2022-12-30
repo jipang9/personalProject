@@ -30,7 +30,7 @@ public class Board extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE, fetch=FetchType.EAGER)
     private List<Comment> comments = new ArrayList<>();
 
     public void updateBoard(BoardRequestDto boardRequestDto) {
@@ -42,7 +42,6 @@ public class Board extends BaseEntity {
         if (board.getMember().getUsername().equals(username))
             return;
         else
-            throw new IsNotWriterException();
-    }
+            throw new IsNotWriterException(); }
 
 }

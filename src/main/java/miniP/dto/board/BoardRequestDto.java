@@ -11,7 +11,6 @@ public class BoardRequestDto {
     private final String title;
     private final String content;
 
-
     public Board toEntity(Member member){
         Board board = Board.builder()
                 .title(this.getTitle())

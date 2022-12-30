@@ -6,6 +6,9 @@ import miniP.dto.board.BoardResponseDto;
 import miniP.entity.Board;
 import miniP.entity.Comment;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @RequiredArgsConstructor
 @Getter
 public class CommentResponseDto {
@@ -20,4 +23,5 @@ public class CommentResponseDto {
     public static CommentResponseDto of(Comment comment){
         return new CommentResponseDto(comment);
     }
+
 }

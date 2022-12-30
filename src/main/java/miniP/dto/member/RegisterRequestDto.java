@@ -20,7 +20,6 @@ public final class RegisterRequestDto {
     private final String password;
 
 
-
     public Member toEntity(String  password){
         return Member.builder()
                 .username(this.getUsername())

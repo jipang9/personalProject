@@ -38,4 +38,5 @@ public class Comment {
     public void updateComment(CommentRequestDto commentRequestDto) {
         this.comment=commentRequestDto.getComment();
     }
+
 }

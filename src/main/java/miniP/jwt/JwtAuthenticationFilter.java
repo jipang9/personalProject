@@ -22,7 +22,7 @@ public class JwtAuthenticationFilter extends GenericFilter {
         if (token != null && jwtTokenProvider.validateTokenExpiration(token)) {
             Authentication auth = jwtTokenProvider.getAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(auth);
-            System.out.println("토큰이 유효합니다.");
+            log.info("유효한 토큰입니다.");
         }
         chain.doFilter(request, response);
     }

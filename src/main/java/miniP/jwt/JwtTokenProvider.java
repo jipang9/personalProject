@@ -31,12 +31,12 @@ public class JwtTokenProvider {
     private long refreshTokenValidTime = 1000L * 60 * 60 * 24 * 7; // refresh token 기한 7일
 
     private final UserDetailsService userDetailsService;
+    private static final String BEARER_PREFIX = "Bearer ";
 
     @PostConstruct
     protected void init() {
         secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
     }
-
 
     // 토큰 생성
     public String createToken(String email) {
@@ -45,8 +45,8 @@ public class JwtTokenProvider {
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(now) // 발급 시간
-                .setExpiration(new Date(now.getTime() + tokenValidTime)) // 만료시간
-                .signWith(SignatureAlgorithm.HS256, secretKey) // 알고리즘이랑 값이용해서 토큰 만들기
+                .setExpiration(new Date(now.getTime() + tokenValidTime))
+                .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
     }
 
@@ -89,6 +89,4 @@ public class JwtTokenProvider {
             return false;
         }
     }
-
-
 }

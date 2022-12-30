@@ -22,8 +22,8 @@ public class Member {
     private Long id;
 
     private String username;
-    private String password;
 
+    private String password;
 
     private String refreshToken;
 
@@ -46,4 +46,5 @@ public class Member {
     public void updateRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
     }
+
 }
