@@ -1,15 +1,13 @@
 package miniP.exception;
 
 import lombok.RequiredArgsConstructor;
-import miniP.exception.board.BoardDeleteException;
-import miniP.exception.board.BoardSaveException;
-import miniP.exception.board.BoardUpdateException;
-import miniP.exception.board.NotFoundBoardException;
+import miniP.exception.board.*;
 import miniP.exception.comment.CommentUpdateException;
 import miniP.exception.comment.FailPostComment;
 import miniP.exception.comment.NotFoundCommentException;
 import miniP.exception.login.LoginFailureException;
 import miniP.exception.member.IsNotWriterException;
+import miniP.exception.member.NotExistMemberException;
 import miniP.exception.member.NotMemberSaveException;
 import miniP.service.ResponseService;
 import miniP.service.result.Result;

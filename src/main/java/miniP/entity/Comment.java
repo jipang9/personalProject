@@ -35,8 +35,8 @@ public class Comment {
             throw new IsNotWriterException();
     }
 
-    public void updateComment(CommentRequestDto commentRequestDto) {
-        this.comment=commentRequestDto.getComment();
+    public void updateComment(String comment) {
+        this.comment=comment;
     }
 
 }

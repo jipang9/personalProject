@@ -1,7 +1,6 @@
 package miniP.entity;
 
 import lombok.*;
-import miniP.dto.board.BoardRequestDto;
 import miniP.exception.member.IsNotWriterException;
 
 import javax.persistence.*;
@@ -33,14 +32,15 @@ public class Board extends BaseEntity {
     @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE, fetch=FetchType.EAGER)
     private List<Comment> comments = new ArrayList<>();
 
-    public void updateBoard(BoardRequestDto boardRequestDto) {
-        this.title = boardRequestDto.getTitle();
-        this.content = boardRequestDto.getContent();
+
+    public void updateBoard(String title, String content) {
+        this.title = title;
+        this.content = content;
     }
 
     public void isWrite(Board board, String username) throws RuntimeException {
-        if (board.getMember().getUsername().equals(username))
-            return;
+        if (board.getMember().getUsername().equals(username)) {
+            }
         else
             throw new IsNotWriterException(); }
 

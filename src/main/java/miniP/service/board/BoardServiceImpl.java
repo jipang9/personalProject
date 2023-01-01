@@ -1,4 +1,4 @@
-package miniP.service;
+package miniP.service.board;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -6,7 +6,7 @@ import miniP.dto.board.BoardRequestDto;
 import miniP.dto.board.BoardResponseDto;
 import miniP.entity.Board;
 import miniP.entity.Member;
-import miniP.exception.NotExistMemberException;
+import miniP.exception.member.NotExistMemberException;
 import miniP.exception.board.NotFoundBoardException;
 import miniP.jwt.SecurityUtil;
 import miniP.repository.BoardRepository;
@@ -21,13 +21,14 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class BoardService {
+public class BoardServiceImpl implements BoardService {
 
     private final BoardRepository boardRepository;
     private final MemberRepository memberRepository;
 
-    @Transactional   // 게시글 저장
-    public BoardResponseDto save(BoardRequestDto boardRequestDto) {
+    @Transactional
+    @Override
+    public BoardResponseDto BoardSave(BoardRequestDto boardRequestDto) {
                 String getUserName = SecurityUtil.getCurrentMemberEmail();
                 Member member = memberRepository.findByUsername(getUserName).orElseThrow(() -> new NotExistMemberException());
                 Board board = boardRequestDto.toEntity(member);
@@ -36,12 +37,14 @@ public class BoardService {
     }
 
     @Transactional(readOnly = true) // 게시물 조회
+    @Override
     public BoardResponseDto getOne(Long id) {
         Board getBoard = boardRepository.findById(id).orElseThrow(() -> new NotFoundBoardException());
         return BoardResponseDto.of(getBoard);
     }
 
     @Transactional // 게시물 삭제
+    @Override
     public void deleteOne(Long id) {
         String getUserName = SecurityUtil.getCurrentMemberEmail();
         Board board = boardRepository.findById(id).orElseThrow(() -> new NotFoundBoardException());
@@ -50,7 +53,8 @@ public class BoardService {
     }
 
     @Transactional(readOnly = true) // 전체 조회
-    public List<BoardResponseDto> findAll() {
+    @Override
+    public List<BoardResponseDto> ListAll() {
         List<Board> boardList = boardRepository.findAllByDateDesc();
         List<BoardResponseDto> getBoard = new ArrayList<>();
         boardList.forEach(entity -> {
@@ -61,11 +65,12 @@ public class BoardService {
     }
 
     @Transactional //    게시물 수정
+    @Override
     public BoardResponseDto updateBoard(Long id, BoardRequestDto boardRequestDto) {
         Board board = boardRepository.findById(id).orElseThrow(() -> new RuntimeException(" 존재하지 않는 게시물 "));
         String getUserName = SecurityUtil.getCurrentMemberEmail();
         board.isWrite(board, getUserName);
-        board.updateBoard(boardRequestDto);
+        board.updateBoard(boardRequestDto.getTitle(), boardRequestDto.getContent());
         boardRepository.save(board);
         return BoardResponseDto.of(board);
     }

@@ -1,4 +1,4 @@
-package miniP.exception;
+package miniP.exception.member;
 
 public class NotExistMemberException extends RuntimeException {
 

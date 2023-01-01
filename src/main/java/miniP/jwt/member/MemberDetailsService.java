@@ -2,7 +2,7 @@ package miniP.jwt.member;
 
 import lombok.RequiredArgsConstructor;
 import miniP.entity.Member;
-import miniP.exception.NotExistMemberException;
+import miniP.exception.member.NotExistMemberException;
 import miniP.repository.MemberRepository;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

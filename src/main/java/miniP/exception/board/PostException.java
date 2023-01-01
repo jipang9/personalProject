@@ -1,4 +1,4 @@
-package miniP.exception;
+package miniP.exception.board;
 
 public class PostException extends RuntimeException {
     public PostException() {
