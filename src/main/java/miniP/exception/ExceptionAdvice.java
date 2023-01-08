@@ -1,17 +1,19 @@
 package miniP.exception;
 
 import lombok.RequiredArgsConstructor;
-import miniP.exception.board.*;
+import miniP.common.ResponseService;
+import miniP.common.result.Result;
+import miniP.exception.board.BoardDeleteException;
+import miniP.exception.board.BoardSaveException;
+import miniP.exception.board.BoardUpdateException;
+import miniP.exception.board.PostException;
 import miniP.exception.comment.CommentUpdateException;
 import miniP.exception.comment.FailPostComment;
 import miniP.exception.comment.NotFoundCommentException;
-import miniP.exception.login.LoginFailureException;
+import miniP.exception.member.CustomException;
 import miniP.exception.member.IsNotWriterException;
-import miniP.exception.member.NotExistMemberException;
-import miniP.exception.member.NotMemberSaveException;
-import miniP.service.ResponseService;
-import miniP.service.result.Result;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -37,16 +39,6 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Result BoardUpdateException(){return responseService.getFailureResult(-103," 게시물 수정오류 발생");}
 
-    @ExceptionHandler(NotExistMemberException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Result NotExistMemberException(){return responseService.getFailureResult(-104,"존재하지 않는 회원");}
-
-    @ExceptionHandler(LoginFailureException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Result loginFailureException() {
-        return responseService.getFailureResult(-105, "아이디 혹은 비밀번호가 틀립니다");
-    }
-
     @ExceptionHandler(BoardSaveException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Result boardSaveFailException() {
@@ -59,17 +51,7 @@ public class ExceptionAdvice {
         return responseService.getFailureResult(-107, "토큰이 존재하지 않습니다.");
     }
 
-    @ExceptionHandler(NotMemberSaveException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Result NotMemberSaveException() {
-        return responseService.getFailureResult(-401, "이미 등록된 회원이 존재합니다");
-    }
 
-    @ExceptionHandler(NotFoundBoardException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Result NotFoundBoardException() {
-        return responseService.getFailureResult(-402,  " 해당 게시물이 존재하지 않습니다 ");
-    }
 
     @ExceptionHandler(IsNotWriterException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -93,6 +75,13 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Result CommentUpdateException() {
         return responseService.getFailureResult(-407, "댓글 수정 실패");
+    }
+
+
+    @ExceptionHandler({CustomException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    protected ResponseEntity handleCustomException(CustomException ex) {
+        return new ResponseEntity(new ErrorDto(ex.getExceptionStatus().getStatusCode(), ex.getExceptionStatus().getMessage()), HttpStatus.valueOf(ex.getExceptionStatus().getStatusCode()));
     }
 
 

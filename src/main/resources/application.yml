@@ -18,8 +18,6 @@ spring:
         show_sql: true #show sql
         open-in-view: false
 
-
-
 logging:
   level:
     org.hibernate:
