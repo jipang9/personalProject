@@ -1,6 +1,8 @@
 package miniP.security.member;
 
 import lombok.RequiredArgsConstructor;
+import miniP.exception.ExceptionStatus;
+import miniP.exception.member.CustomException;
 import miniP.member.entity.Member;
 import miniP.exception.member.NotExistMemberException;
 import miniP.member.repository.MemberRepository;
@@ -22,13 +24,14 @@ public class MemberDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Member member = memberRepository.findByUsername(username).orElseThrow(NotExistMemberException::new);
+        Member member = memberRepository.findByUsername(username).orElseThrow(()-> new CustomException(ExceptionStatus.USER_IS_NOT_EXIST));
         return MemberDetails.builder()
                 .username(member.getUsername())
                 .password(member.getPassword())
                 .authorities(member.getRole().stream()
                         .map(auth -> new SimpleGrantedAuthority(auth.toString()))
                         .collect(Collectors.toList()))
+                .member(member)
                 .build();
     }
 }

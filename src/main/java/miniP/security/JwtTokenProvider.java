@@ -32,7 +32,7 @@ public class JwtTokenProvider {
     @Value("${spring.jwt.secretKey}")
     private String secretKey;
 
-    private long tokenValidTime = 1000L * 60 * 60 * 24 * 7; // 토큰 만료시간 7일
+    private long tokenValidTime = 1000L * 60 * 60; // 토큰 만료시간 7일
     private long refreshTokenValidTime = 1000L * 60 * 60 * 24 * 7; // refresh token 기한 7일
 
     private final UserDetailsService userDetailsService;
@@ -69,6 +69,7 @@ public class JwtTokenProvider {
     // 토큰으로 인증객체(Authentication) 얻기
     public Authentication getAuthentication(String token) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(getMemberEmail(token));
+
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
@@ -92,9 +93,10 @@ public class JwtTokenProvider {
 
     // 토큰의 유효성 검사
     public void validateTokenExpiration(String token) {
+        try{
             Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+    }catch (RuntimeException e){
+            e.printStackTrace();
+        }
     }
-
-
-
 }

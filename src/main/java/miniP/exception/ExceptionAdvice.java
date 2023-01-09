@@ -45,11 +45,6 @@ public class ExceptionAdvice {
         return responseService.getFailureResult(-106, "게시물 작성 실패");
     }
 
-    @ExceptionHandler(NotExistTokenException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Result notExistTokenException() {
-        return responseService.getFailureResult(-107, "토큰이 존재하지 않습니다.");
-    }
 
 
 
