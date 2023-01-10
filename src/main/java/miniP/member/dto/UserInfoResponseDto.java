@@ -19,7 +19,6 @@ public class UserInfoResponseDto {
 
     public static UserInfoResponseDto of(Member member){
         return  new UserInfoResponseDto(member);
-
     }
 
 }

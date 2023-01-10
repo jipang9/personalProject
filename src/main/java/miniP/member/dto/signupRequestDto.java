@@ -20,7 +20,6 @@ public final class signupRequestDto {
     @Pattern(regexp = "^[a-zA-Z0-9]*$")
     private final String password;
 
-
     public Member toEntity(String  password){
         return Member.builder()
                 .username(this.getUsername())

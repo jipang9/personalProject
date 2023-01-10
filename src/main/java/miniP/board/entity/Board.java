@@ -31,9 +31,6 @@ public class Board extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE, fetch=FetchType.EAGER)
-    private List<Comment> comments = new ArrayList<>();
-
 
     public void updateBoard(String title, String content) {
         this.title = title;

@@ -12,6 +12,6 @@ public interface MemberService {
 
     loginResponseDto login(signupRequestDto signupRequestDto); // 사용자 로그인
 
-    UserInfoResponseDto getMyInfo(Long id );
+    UserInfoResponseDto getMyInfo(Long id);
 
 }

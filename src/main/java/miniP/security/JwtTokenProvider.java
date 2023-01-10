@@ -4,10 +4,13 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import miniP.exception.ExceptionStatus;
 import miniP.exception.member.CustomException;
+import miniP.security.member.MemberDetailsService;
 import org.hibernate.query.criteria.internal.predicate.BooleanExpressionPredicate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -20,27 +23,32 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
+import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
 
 @Setter
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class JwtTokenProvider {
 
 
     @Value("${spring.jwt.secretKey}")
     private String secretKey;
 
-    private long tokenValidTime = 1000L * 60 * 60; // 토큰 만료시간 7일
+    private long tokenValidTime = 1000L * 60 * 60*24; // 토큰 만료시간 7일
     private long refreshTokenValidTime = 1000L * 60 * 60 * 24 * 7; // refresh token 기한 7일
 
+    private Key key;
     private final UserDetailsService userDetailsService;
+    private final MemberDetailsService memberDetailsService;
     private static final String BEARER_PREFIX = "Bearer ";
 
     @PostConstruct
-    protected void init() {
-        secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
+    public void init() {
+        byte[] bytes = Base64.getDecoder().decode(secretKey);
+        key = Keys.hmacShaKeyFor(bytes);
     }
 
     // 토큰 생성
@@ -52,7 +60,7 @@ public class JwtTokenProvider {
                 .setClaims(claims)
                 .setIssuedAt(now) // 발급 시간
                 .setExpiration(new Date(now.getTime() + tokenValidTime))
-                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .signWith(key,SignatureAlgorithm.HS256)
                 .compact();
     }
 
@@ -62,22 +70,31 @@ public class JwtTokenProvider {
         return Jwts.builder()
                 .setIssuedAt(now)
                 .setExpiration(new Date(now.getTime() + refreshTokenValidTime))
-                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .signWith(key,SignatureAlgorithm.HS256)
                 .compact();
     }
 
     // 토큰으로 인증객체(Authentication) 얻기
     public Authentication getAuthentication(String token) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(getMemberEmail(token));
-
+        log.info("===================================== 토큰 인증객체 얻기 시작");
+        UserDetails userDetails = memberDetailsService.loadUserByUsername(getMemberEmail(token));
+        if(userDetails.getUsername()==null)
+            log.info(" 티비도 보지 마 !");
+        else
+            log.info("코끼리");// 여기엔 있음 사용자 데이터가
+        log.info("=====================================토큰 인증객체 얻기 끝");
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
     // 이메일을 얻기 위해 실제로 토큰을 디코딩-> 지정된 secretekey를 이용해 인증 객체를 끌고올 수 있음.
     public String getMemberEmail(String token) {
         try {
-            return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
+            log.info("===================================== 실제 토큰 디코딩 시작");  // 여기도 문제없이 통과함
+            String subject = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getSubject();
+            log.info(subject);
+            return subject;
         } catch (ExpiredJwtException e) {
+            log.info("===================================== 실제 토큰 디코딩 오류 발생");
             return e.getClaims().getSubject();
         }
     }
@@ -92,11 +109,18 @@ public class JwtTokenProvider {
     }
 
     // 토큰의 유효성 검사
-    public void validateTokenExpiration(String token) {
+    public Boolean validateTokenExpiration(String token) {
         try{
-            Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
-    }catch (RuntimeException e){
+            log.info("===================================== 토큰 유효성 검사");
+            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            log.info("===================================== 토큰 유효성 검사 끝");
+            return true;
+    }catch (Exception e){
             e.printStackTrace();
+            log.info("===================================== 토큰 유효성 오류 발생");
+            return false;
         }
     }
+
+
 }

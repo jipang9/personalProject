@@ -36,7 +36,7 @@ public class Member {
 
 
     @Builder
-    public Member(String username, String password, List<RoleType> role) {
+    public Member(String username, String password) {
         this.username = username;
         this.password = password;
         this.role= Collections.singletonList(RoleType.ROLE_USER);

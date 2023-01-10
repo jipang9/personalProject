@@ -29,6 +29,8 @@ public class Comment {
     @JoinColumn(name = "member_id")
     private Member member;
 
+
+
     public void isWrite(Comment comment, String user) {
         if(comment.getMember().getUsername().equals(user))
             return;

@@ -1,6 +1,7 @@
 package miniP.security.member;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import miniP.exception.ExceptionStatus;
 import miniP.exception.member.CustomException;
 import miniP.member.entity.Member;
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
+@Slf4j
 public class MemberDetailsService implements UserDetailsService {
 
     private final MemberRepository memberRepository;

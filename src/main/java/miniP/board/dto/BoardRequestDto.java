@@ -3,6 +3,8 @@ import lombok.*;
 import miniP.board.entity.Board;
 import miniP.member.entity.Member;
 
+import javax.validation.constraints.NotNull;
+
 @Getter
 @RequiredArgsConstructor
 @NoArgsConstructor(force = true)
