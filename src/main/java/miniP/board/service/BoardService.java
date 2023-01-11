@@ -2,6 +2,7 @@ package miniP.board.service;
 
 import miniP.board.dto.BoardRequestDto;
 import miniP.board.dto.BoardResponseDto;
+import miniP.board.dto.BoardsResponseDto;
 import miniP.member.entity.Member;
 
 import java.util.List;
@@ -14,9 +15,9 @@ public interface BoardService {
 
     void deleteOne(Long id); // 게시글 단건 삭제
 
-//    List<BoardResponseDto> ListAll(); // 게시글 전체 조회
+    List<BoardsResponseDto> ListAll(); // 게시글 전체 조회
 
-//    BoardResponseDto updateBoard(Long id, BoardRequestDto boardRequestDto); // 게시글 수정
+    void updateBoard(Long id, BoardRequestDto boardRequestDto, Member member); // 게시글 수정
 
-    List<BoardResponseDto> myBoardList(Member member); // 내가 작성한 게시글 리스트
+//    List<BoardResponseDto> myBoardList(Member member); // 내가 작성한 게시글 리스트 -> my service 이런 쪽으로 빼는 것이 맞을듯
 }

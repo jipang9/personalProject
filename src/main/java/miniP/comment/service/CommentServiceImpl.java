@@ -27,34 +27,27 @@ public class CommentServiceImpl implements CommentService{
 
     @Transactional
     @Override
-    public CommentResponseDto postComment(Long BoardId, CommentRequestDto commentRequestDto) {
-        String user = SecurityUtil.getCurrentMemberEmail();
-        Member member = memberRepository.findByUsername(user).orElseThrow(() -> new NotExistMemberException());
+    public void postComment(Long BoardId, CommentRequestDto commentRequestDto, Member member) {
         Board board = boardRepository.findById(BoardId).orElseThrow(() -> new NotFoundBoardException());
         Comment comment = commentRequestDto.toEntity(board, member);
         commentRepository.save(comment);
-        return CommentResponseDto.of(comment);
-
     }
 
     @Transactional
     @Override
-    public void deleteOne(Long id) {
+    public void deleteOne(Long id, Member member) {
         Comment comment = commentRepository.findById(id).orElseThrow(() -> new NotFoundCommentException());
-        String user = SecurityUtil.getCurrentMemberEmail();
-        comment.isWrite(comment, user);
+        comment.isWrite(comment, member.getUsername());
         commentRepository.delete(comment);
     }
 
     @Transactional
     @Override
-    public CommentResponseDto modifyComment(Long id, CommentRequestDto commentRequestDto) {
+    public void modifyComment(Long id, CommentRequestDto commentRequestDto, Member member) {
         Comment comment = commentRepository.findById(id).orElseThrow(() -> new NotFoundCommentException());
-        String user = SecurityUtil.getCurrentMemberEmail();
-        comment.isWrite(comment, user);
+        comment.isWrite(comment, member.getUsername());
         comment.updateComment(commentRequestDto.getComment());
         commentRepository.save(comment);
-        return CommentResponseDto.of(comment);
     }
 
 }

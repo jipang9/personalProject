@@ -2,6 +2,8 @@ package miniP.board.entity;
 
 import lombok.*;
 import miniP.comment.entity.Comment;
+import miniP.exception.ExceptionStatus;
+import miniP.exception.member.CustomException;
 import miniP.exception.member.IsNotWriterException;
 import miniP.member.entity.Member;
 
@@ -42,7 +44,8 @@ public class Board extends BaseEntity {
         if (this.getMember().getUsername().equals(username)) {
             }
         else
-            throw new IsNotWriterException(); }
+            throw new CustomException(ExceptionStatus.NOT_AUTHOR);
+    }
 
 
 

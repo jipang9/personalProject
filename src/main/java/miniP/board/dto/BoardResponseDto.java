@@ -10,12 +10,12 @@ import java.util.List;
 
 @Getter
 @RequiredArgsConstructor
-public class BoardResponseDto {
+public class BoardResponseDto { // getOne
 
     private final Long id;
     private final String title;
     private final String content;
-    private final String username;
+    private final String writer;
     private final List<CommentResponseDto> commentList;
     private final LocalDateTime createTime;
     private final LocalDateTime modDateTime;
@@ -25,7 +25,7 @@ public class BoardResponseDto {
         this.id = board.getId();
         this.title = board.getTitle();
         this.content = board.getContent();
-        this.username = board.getMember().getUsername();
+        this.writer = board.getMember().getUsername();
         this.createTime = board.getCreateDate();
         this.modDateTime = board.getModDate();
         this.commentList =comments;

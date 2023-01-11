@@ -2,14 +2,15 @@ package miniP.comment.service;
 
 import miniP.comment.dto.CommentRequestDto;
 import miniP.comment.dto.CommentResponseDto;
+import miniP.member.entity.Member;
 
 public interface CommentService {
 
 
-    CommentResponseDto postComment(Long BoardId, CommentRequestDto commentRequestDto);
+    void postComment(Long BoardId, CommentRequestDto commentRequestDto, Member member);
 
-    void deleteOne(Long id);
+    void deleteOne(Long id, Member member);
 
-    CommentResponseDto modifyComment(Long id, CommentRequestDto commentRequestDto);
+    void modifyComment(Long id, CommentRequestDto commentRequestDto,Member member);
 
 }

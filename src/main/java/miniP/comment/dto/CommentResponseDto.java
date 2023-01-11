@@ -9,11 +9,11 @@ import miniP.comment.entity.Comment;
 public class CommentResponseDto {
 
     private final String comment;
-    private final String username;
+    private final String writer;
 
     public CommentResponseDto(Comment comment) {
         this.comment = comment.getComment();
-        this.username = comment.getMember().getUsername();
+        this.writer = comment.getMember().getUsername();
     }
     public static CommentResponseDto of(Comment comment){
         return new CommentResponseDto(comment);

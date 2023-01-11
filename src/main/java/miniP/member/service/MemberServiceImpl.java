@@ -52,8 +52,8 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public UserInfoResponseDto getMyInfo(Long id) {
-        Member member = memberRepository.findById(id).orElseThrow(IllegalAccessError::new);
+    public UserInfoResponseDto getMyInfo(String username) {
+        Member member = memberRepository.findByUsername(username).orElseThrow(IllegalAccessError::new);
         return UserInfoResponseDto.of(member);
     }
 

@@ -4,16 +4,18 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import miniP.board.dto.BoardRequestDto;
 import miniP.board.dto.BoardResponseDto;
+import miniP.board.dto.BoardsResponseDto;
 import miniP.board.entity.Board;
-import miniP.comment.dto.CommentResponseDto;
-import miniP.comment.entity.Comment;
-import miniP.comment.repository.CommentRepository;
-import miniP.member.entity.Member;
-import miniP.exception.member.NotExistMemberException;
-import miniP.exception.board.NotFoundBoardException;
-import miniP.security.SecurityUtil;
 import miniP.board.repository.BoardRepository;
+import miniP.comment.dto.CommentResponseDto;
+import miniP.comment.repository.CommentRepository;
+import miniP.exception.ExceptionStatus;
+import miniP.exception.board.NotFoundBoardException;
+import miniP.exception.member.CustomException;
+import miniP.exception.member.NotExistMemberException;
+import miniP.member.entity.Member;
 import miniP.member.repository.MemberRepository;
+import miniP.security.SecurityUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,7 +40,7 @@ public class BoardServiceImpl implements BoardService {
         boardRepository.save(board);
     }
 
-    @Transactional(readOnly = true) // 게시물 조회
+    @Transactional(readOnly = true) // 게시물 조회 (단건 - 댓글까지 다 )
     @Override
     public BoardResponseDto getOne(Long id) {
         Board getBoard = boardRepository.findById(id).orElseThrow(() -> new NotFoundBoardException());
@@ -55,32 +57,28 @@ public class BoardServiceImpl implements BoardService {
         boardRepository.deleteById(id);
     }
 
-//    @Transactional(readOnly = true) // 전체 조회
-//    @Override
-//    public List<BoardResponseDto> ListAll() {
-//        List<Board> boardList = boardRepository.findAllByDateDesc();
-//        List<BoardResponseDto> getBoard = new ArrayList<>();
-//        boardList.forEach(entity -> {
-//            BoardResponseDto boardResponseDto = BoardResponseDto.of(entity);
-//            getBoard.add(boardResponseDto);
-//        });
-//        return getBoard;
-//    }
-
-//    @Transactional //    게시물 수정
-//    @Override
-//    public BoardResponseDto updateBoard(Long id, BoardRequestDto boardRequestDto) {
-//        Board board = boardRepository.findById(id).orElseThrow(() -> new RuntimeException(" 존재하지 않는 게시물 "));
-//        String getUserName = SecurityUtil.getCurrentMemberEmail();
-//        board.isWrite(getUserName);
-//        board.updateBoard(boardRequestDto.getTitle(), boardRequestDto.getContent());
-//        boardRepository.save(board);
-//        return BoardResponseDto.of(board);
-//    }
-
+    @Transactional(readOnly = true) // 전체 조회 ( 간략한 내용 만 )
     @Override
-    public List<BoardResponseDto> myBoardList(Member member) {
-        List<BoardResponseDto> myboards = boardRepository.findAllByMember(member);
-        return myboards;
+    public List<BoardsResponseDto> ListAll() {
+        List<Board> boardList = boardRepository.findAllByDateDesc();
+        List<BoardsResponseDto> getBoard = new ArrayList<>();
+        boardList.forEach(o->{BoardsResponseDto boardsResponseDto =new BoardsResponseDto(o, commentRepository.countCommentByBoardId(o.getId())
+        ); getBoard.add(boardsResponseDto);});
+        return getBoard;
     }
+
+    @Transactional //    게시물 수정
+    @Override
+    public void updateBoard(Long id, BoardRequestDto boardRequestDto, Member member) {
+        Board board = boardRepository.findById(id).orElseThrow(() -> new CustomException(ExceptionStatus.BOARD_IS_NOT_EXIST));
+        board.isWrite(member.getUsername());
+        board.updateBoard(boardRequestDto.getTitle(), boardRequestDto.getContent());
+        boardRepository.save(board);
+    }
+
+//    @Override
+//    public List<BoardResponseDto> myBoardList(Member member) {
+//        List<BoardResponseDto> myboards = boardRepository.findAllByMember(member);
+//        return myboards;
+//    }
 }
