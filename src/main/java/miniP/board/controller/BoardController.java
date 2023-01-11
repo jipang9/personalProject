@@ -7,6 +7,9 @@ import miniP.board.dto.BoardResponseDto;
 import miniP.board.dto.BoardsResponseDto;
 import miniP.board.service.BoardService;
 import miniP.security.member.MemberDetails;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -34,8 +37,8 @@ public class BoardController {
     }
 
     @DeleteMapping("/delete/{id}") // 이것도 그냥 삭제니까 -> 반환 데이터 따로 필요는 없을 것 같은데 그냥 HTTPSTATUS 넣긴함.
-    public HttpStatus deleteOne(@PathVariable("id") Long id) {
-        boardService.deleteOne(id);
+    public HttpStatus deleteOne(@PathVariable("id") Long id, @AuthenticationPrincipal MemberDetails memberDetails) {
+        boardService.deleteOne(id, memberDetails.getMember());
         return HttpStatus.OK;
     }
 
@@ -53,7 +56,15 @@ public class BoardController {
         return ResponseEntity.ok().body(result);
     }
 
-//    @GetMapping("/list/myboards")
+    @GetMapping("/list") // 페이징 처리
+    public ResponseEntity<List<BoardsResponseDto>> getBoards
+            (@RequestParam(defaultValue = "1") int page,
+             @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        List<BoardsResponseDto> result = boardService.ListPaging(pageable, page - 1);
+        return ResponseEntity.status(200).body(result);
+    }
+
+//    @GetMapping("/list/myboards") -> 이 기능은 MyService 이런식으로 뺴버리자
 //    public ResponseEntity<List<BoardResponseDto>> getMyBoard(@AuthenticationPrincipal MemberDetails memberDetails) {
 //        List<BoardResponseDto> result = boardService.myBoardList(memberDetails.getMember());
 //        return ResponseEntity.status(200).body(result);

@@ -16,6 +16,8 @@ import miniP.exception.member.NotExistMemberException;
 import miniP.member.entity.Member;
 import miniP.member.repository.MemberRepository;
 import miniP.security.SecurityUtil;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,10 +52,9 @@ public class BoardServiceImpl implements BoardService {
 
     @Transactional // 게시물 삭제
     @Override
-    public void deleteOne(Long id) {
-        String getUserName = SecurityUtil.getCurrentMemberEmail();
+    public void deleteOne(Long id, Member member) {
         Board board = boardRepository.findById(id).orElseThrow(() -> new NotFoundBoardException());
-        board.isWrite(getUserName);
+        board.isWrite(member.getUsername());
         boardRepository.deleteById(id);
     }
 
@@ -62,9 +63,25 @@ public class BoardServiceImpl implements BoardService {
     public List<BoardsResponseDto> ListAll() {
         List<Board> boardList = boardRepository.findAllByDateDesc();
         List<BoardsResponseDto> getBoard = new ArrayList<>();
-        boardList.forEach(o->{BoardsResponseDto boardsResponseDto =new BoardsResponseDto(o, commentRepository.countCommentByBoardId(o.getId())
-        ); getBoard.add(boardsResponseDto);});
+        boardList.forEach(o -> {
+            BoardsResponseDto boardsResponseDto
+                    = new BoardsResponseDto(o, commentRepository.countCommentByBoardId(o.getId())
+            );
+            getBoard.add(boardsResponseDto);
+        });
         return getBoard;
+    }
+
+    @Override
+    public List<BoardsResponseDto> ListPaging(Pageable pageable, int page) {
+        List<BoardsResponseDto> resultList = new ArrayList<>();
+        Page<Board> pages = boardRepository.findAll(pageable.withPage(page));
+        for (Board board : pages) {
+            Long count = commentRepository.countCommentByBoardId(board.getId());
+            BoardsResponseDto boardsResponseDto = new BoardsResponseDto(board, count);
+            resultList.add(boardsResponseDto);
+        }
+        return resultList;
     }
 
     @Transactional //    게시물 수정
