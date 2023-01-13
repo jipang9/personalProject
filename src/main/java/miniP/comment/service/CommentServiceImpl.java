@@ -1,20 +1,19 @@
 package miniP.comment.service;
 
 import lombok.RequiredArgsConstructor;
+import miniP.board.entity.Board;
+import miniP.board.repository.BoardRepository;
 import miniP.comment.dto.CommentRequestDto;
 import miniP.comment.dto.CommentResponseDto;
-import miniP.board.entity.Board;
 import miniP.comment.entity.Comment;
-import miniP.member.entity.Member;
-import miniP.exception.member.NotExistMemberException;
+import miniP.comment.repository.CommentRepository;
 import miniP.exception.board.NotFoundBoardException;
 import miniP.exception.comment.NotFoundCommentException;
-import miniP.security.SecurityUtil;
-import miniP.board.repository.BoardRepository;
-import miniP.comment.repository.CommentRepository;
-import miniP.member.repository.MemberRepository;
+import miniP.member.entity.Member;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -22,7 +21,6 @@ public class CommentServiceImpl implements CommentService{
 
     private final CommentRepository commentRepository;
     private final BoardRepository boardRepository;
-    private final MemberRepository memberRepository;
 
 
     @Transactional
@@ -48,6 +46,23 @@ public class CommentServiceImpl implements CommentService{
         comment.isWrite(comment, member.getUsername());
         comment.updateComment(commentRequestDto.getComment());
         commentRepository.save(comment);
+    }
+
+    @Transactional
+    @Override
+    public void deleteCommentsByBoard(Long id) {
+        List<Long> boardIds = commentRepository.findAllByBoardId(id);
+        commentRepository.deleteAllByBoardIds(boardIds);
+    }
+
+    @Override
+    public Long countCommentByBoardId(Long id) {
+        return commentRepository.countCommentByBoardId(id);
+    }
+
+    @Override
+    public List<CommentResponseDto> comments(Long id) {
+        return commentRepository.findCommentByBoardId(id);
     }
 
 }

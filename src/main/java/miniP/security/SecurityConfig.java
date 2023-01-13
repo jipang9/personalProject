@@ -22,11 +22,11 @@ public class SecurityConfig  {
 
     private final JwtTokenProvider jwtTokenProvider;
 
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer(){
-        return (web) -> web.ignoring()
-                .antMatchers("/api/users/**");
-    }
+//    @Bean
+//    public WebSecurityCustomizer webSecurityCustomizer(){
+//        return (web) -> web.ignoring()
+//                .antMatchers("/api/users/**");
+//    }
 
     @Bean
     protected SecurityFilterChain configure(HttpSecurity http) throws Exception {
@@ -37,8 +37,8 @@ public class SecurityConfig  {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 토큰 기반이라 세션사용 x
                 .and()
                 .authorizeRequests()
-                .antMatchers("/api/users/**").permitAll()
-                .antMatchers("/test/cc").hasAnyAuthority("ROLE_ADMIN")
+                .antMatchers("/api/users/signup").permitAll()
+                .antMatchers("/api/users/login").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling().authenticationEntryPoint(new CustomAuthenticationEntryPoint())

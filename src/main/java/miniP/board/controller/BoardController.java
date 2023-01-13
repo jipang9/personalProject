@@ -48,7 +48,6 @@ public class BoardController {
         return ResponseEntity.status(201).build();
     }
 
-
     @GetMapping("") // 게시판 페이지라고 생각해보자
     // -> 모든 게시물의 제목과  작성자 명, comment 갯수, 좋아요 갯수, 조회수, 작성일자. 내용 정도만 뱉어내면 될 것 같다.
     public ResponseEntity<List<BoardsResponseDto>> getBoardList() {

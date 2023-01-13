@@ -9,13 +9,13 @@ import miniP.board.entity.Board;
 import miniP.board.repository.BoardRepository;
 import miniP.comment.dto.CommentResponseDto;
 import miniP.comment.repository.CommentRepository;
+import miniP.comment.service.CommentService;
 import miniP.exception.ExceptionStatus;
 import miniP.exception.board.NotFoundBoardException;
 import miniP.exception.member.CustomException;
 import miniP.exception.member.NotExistMemberException;
 import miniP.member.entity.Member;
 import miniP.member.repository.MemberRepository;
-import miniP.security.SecurityUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -32,7 +32,7 @@ public class BoardServiceImpl implements BoardService {
 
     private final BoardRepository boardRepository;
     private final MemberRepository memberRepository;
-    private final CommentRepository commentRepository;
+    private final CommentService commentService;
 
     @Transactional
     @Override
@@ -46,15 +46,16 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public BoardResponseDto getOne(Long id) {
         Board getBoard = boardRepository.findById(id).orElseThrow(() -> new NotFoundBoardException());
-        List<CommentResponseDto> comments = commentRepository.findCommentByBoardId(getBoard.getId());
+        List<CommentResponseDto> comments = commentService.comments(getBoard.getId());
         return BoardResponseDto.of(getBoard, comments);
     }
 
     @Transactional // 게시물 삭제
     @Override
     public void deleteOne(Long id, Member member) {
-        Board board = boardRepository.findById(id).orElseThrow(() -> new NotFoundBoardException());
-        board.isWrite(member.getUsername());
+        Board board = boardRepository.findById(id).orElseThrow(() -> new NotFoundBoardException()); // 해당 게시물
+        board.isWrite(member.getUsername()); // 작성자 체크
+        commentService.deleteCommentsByBoard(board.getId()); // comment 삭제
         boardRepository.deleteById(id);
     }
 
@@ -65,9 +66,10 @@ public class BoardServiceImpl implements BoardService {
         List<BoardsResponseDto> getBoard = new ArrayList<>();
         boardList.forEach(o -> {
             BoardsResponseDto boardsResponseDto
-                    = new BoardsResponseDto(o, commentRepository.countCommentByBoardId(o.getId())
+                    = new BoardsResponseDto(o, commentService.countCommentByBoardId(o.getId())
             );
             getBoard.add(boardsResponseDto);
+
         });
         return getBoard;
     }
@@ -77,14 +79,16 @@ public class BoardServiceImpl implements BoardService {
         List<BoardsResponseDto> resultList = new ArrayList<>();
         Page<Board> pages = boardRepository.findAll(pageable.withPage(page));
         for (Board board : pages) {
-            Long count = commentRepository.countCommentByBoardId(board.getId());
+            Long count = commentService.countCommentByBoardId(board.getId());
             BoardsResponseDto boardsResponseDto = new BoardsResponseDto(board, count);
             resultList.add(boardsResponseDto);
         }
         return resultList;
     }
 
-    @Transactional //    게시물 수정
+
+
+    @Transactional // 게시물 수정
     @Override
     public void updateBoard(Long id, BoardRequestDto boardRequestDto, Member member) {
         Board board = boardRepository.findById(id).orElseThrow(() -> new CustomException(ExceptionStatus.BOARD_IS_NOT_EXIST));
@@ -93,9 +97,13 @@ public class BoardServiceImpl implements BoardService {
         boardRepository.save(board);
     }
 
+
+
 //    @Override
 //    public List<BoardResponseDto> myBoardList(Member member) {
 //        List<BoardResponseDto> myboards = boardRepository.findAllByMember(member);
 //        return myboards;
 //    }
+
+
 }
