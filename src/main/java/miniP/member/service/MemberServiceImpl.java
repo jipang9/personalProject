@@ -1,7 +1,6 @@
 package miniP.member.service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import miniP.exception.ExceptionStatus;
 import miniP.exception.member.CustomException;
 import miniP.member.dto.UserInfoResponseDto;
@@ -17,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-@Slf4j
 public class MemberServiceImpl implements MemberService {
 
     private final JwtTokenProvider jwtTokenProvider;
@@ -31,7 +29,6 @@ public class MemberServiceImpl implements MemberService {
         checkByMemberDuplicated(signupRequestDto.getUsername()); // 해당 궁금증이 생긴 부분
         Member member = signupRequestDto.toEntity(passwordEncoder.encode(signupRequestDto.getPassword()));
         memberRepository.save(member);
-        log.info(member.getUsername(), member.getPassword(), member.getRole());
     }
 
     // 동시성을 막는 방법 -> 제약조건 exception

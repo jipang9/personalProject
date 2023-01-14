@@ -38,7 +38,7 @@ public class BoardController {
 
     @DeleteMapping("/delete/{id}") // 이것도 그냥 삭제니까 -> 반환 데이터 따로 필요는 없을 것 같은데 그냥 HTTPSTATUS 넣긴함.
     public HttpStatus deleteOne(@PathVariable("id") Long id, @AuthenticationPrincipal MemberDetails memberDetails) {
-        boardService.deleteOne(id, memberDetails.getMember());
+        boardService.deleteOneV2(id, memberDetails.getMember());
         return HttpStatus.OK;
     }
 

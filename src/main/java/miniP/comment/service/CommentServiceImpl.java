@@ -56,6 +56,11 @@ public class CommentServiceImpl implements CommentService{
     }
 
     @Override
+    public void deleteCommentsByBoardV2(Board board) {
+        commentRepository.deleteAllByBoard(board);
+    }
+
+    @Override
     public Long countCommentByBoardId(Long id) {
         return commentRepository.countCommentByBoardId(id);
     }

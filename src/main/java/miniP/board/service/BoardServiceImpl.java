@@ -59,6 +59,16 @@ public class BoardServiceImpl implements BoardService {
         boardRepository.deleteById(id);
     }
 
+    @Override
+    @Transactional
+    public void deleteOneV2(Long id, Member member) {
+        Board board = boardRepository.findById(id).orElseThrow(() -> new NotFoundBoardException()); // 해당 게시물
+        board.isWrite(member.getUsername()); // 작성자 체크
+        commentService.deleteCommentsByBoardV2(board);
+        boardRepository.deleteById(id);
+
+    }
+
     @Transactional(readOnly = true) // 전체 조회 ( 간략한 내용 만 )
     @Override
     public List<BoardsResponseDto> ListAll() {

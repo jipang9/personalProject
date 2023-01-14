@@ -14,7 +14,9 @@ public interface BoardService {
 
     BoardResponseDto getOne(Long id); // 게시글 단건 조회
 
-    void deleteOne(Long id, Member member); // 게시글 단건 삭제
+    void deleteOne(Long id, Member member); // 게시글 단건 삭제 -> 벌크연산
+
+    void deleteOneV2(Long id, Member member);
 
     List<BoardsResponseDto> ListAll(); // 게시글 전체 조회
 
