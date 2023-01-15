@@ -8,7 +8,6 @@ import miniP.board.dto.BoardsResponseDto;
 import miniP.board.entity.Board;
 import miniP.board.repository.BoardRepository;
 import miniP.comment.dto.CommentResponseDto;
-import miniP.comment.repository.CommentRepository;
 import miniP.comment.service.CommentService;
 import miniP.exception.ExceptionStatus;
 import miniP.exception.board.NotFoundBoardException;
@@ -60,7 +59,7 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    @Transactional
+    @Transactional // 게시물 삭제 -> board entity를 넘기자.
     public void deleteOneV2(Long id, Member member) {
         Board board = boardRepository.findById(id).orElseThrow(() -> new NotFoundBoardException()); // 해당 게시물
         board.isWrite(member.getUsername()); // 작성자 체크
@@ -97,7 +96,6 @@ public class BoardServiceImpl implements BoardService {
     }
 
 
-
     @Transactional // 게시물 수정
     @Override
     public void updateBoard(Long id, BoardRequestDto boardRequestDto, Member member) {
@@ -107,9 +105,13 @@ public class BoardServiceImpl implements BoardService {
         boardRepository.save(board);
     }
 
+    @Override
+    public Board findBoard(Long id) {
+        Board board = boardRepository.findById(id).orElseThrow(() -> new CustomException(ExceptionStatus.BOARD_IS_NOT_EXIST));
+        return board; // 이걸 메소드화 했던 내용을 과거에 관호님이랑 이야기 했었던 것 같은데...
+    }
 
-
-//    @Override
+    //    @Override
 //    public List<BoardResponseDto> myBoardList(Member member) {
 //        List<BoardResponseDto> myboards = boardRepository.findAllByMember(member);
 //        return myboards;

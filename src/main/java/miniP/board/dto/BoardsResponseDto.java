@@ -15,6 +15,7 @@ public class BoardsResponseDto {
     private final String writer;
     private final Long commentCount;
     private final LocalDateTime localDateTime;
+    private final Long recommendCount;
 
 
     public BoardsResponseDto(Board board, Long commentCount) {
@@ -24,6 +25,7 @@ public class BoardsResponseDto {
         this.writer = board.getMember().getUsername();
         this.commentCount = commentCount;
         this.localDateTime = board.getCreateDate();
+        this.recommendCount = board.getRecommendCount();
     }
 
 

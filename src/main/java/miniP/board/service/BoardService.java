@@ -3,6 +3,7 @@ package miniP.board.service;
 import miniP.board.dto.BoardRequestDto;
 import miniP.board.dto.BoardResponseDto;
 import miniP.board.dto.BoardsResponseDto;
+import miniP.board.entity.Board;
 import miniP.member.entity.Member;
 import org.springframework.data.domain.Pageable;
 
@@ -23,6 +24,8 @@ public interface BoardService {
     List<BoardsResponseDto> ListPaging(Pageable pageable,int page);
 
     void updateBoard(Long id, BoardRequestDto boardRequestDto, Member member); // 게시글 수정
+
+    Board findBoard(Long id);
 
 //    List<BoardResponseDto> myBoardList(Member member); // 내가 작성한 게시글 리스트 -> my service 이런 쪽으로 빼는 것이 맞을듯
 }

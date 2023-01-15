@@ -1,28 +1,27 @@
 package miniP.recommend.controller;
 
+
 import lombok.RequiredArgsConstructor;
 import miniP.recommend.service.RecommendService;
 import miniP.security.member.MemberDetails;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/recommend/board")
-public class RecommendController {
+@RequestMapping("/api/recommend/comment")
+public class CommentController {
 
     private final RecommendService recommendService;
 
+
     @PostMapping("/{id}")
     public ResponseEntity<Void> recommendUp(@PathVariable("id") Long id, @AuthenticationPrincipal MemberDetails memberDetails){
-        recommendService.upRecommendByBoard(id, memberDetails.getMember());
-        return ResponseEntity.status(201).build();
-    }
-
-    @PostMapping("/unlike/{id}")
-    public ResponseEntity<Void> recommendDown(@PathVariable("id") Long id, @AuthenticationPrincipal MemberDetails memberDetails){
-        recommendService.downRecommendByBoard(id, memberDetails.getMember());
+        recommendService.upRecommendByComment(id, memberDetails.getMember());
         return ResponseEntity.status(201).build();
     }
 

@@ -36,13 +36,19 @@ public class BoardController {
         return ResponseEntity.ok().body(resultData);
     }
 
-    @DeleteMapping("/delete/{id}") // 이것도 그냥 삭제니까 -> 반환 데이터 따로 필요는 없을 것 같은데 그냥 HTTPSTATUS 넣긴함.
+    @DeleteMapping("/delete/{id}") // in query 방식
     public HttpStatus deleteOne(@PathVariable("id") Long id, @AuthenticationPrincipal MemberDetails memberDetails) {
+        boardService.deleteOne(id, memberDetails.getMember());
+        return HttpStatus.OK;
+    }
+
+    @DeleteMapping("/deleteV2/{id}") //  entity를 그냥 넘겨버린다
+    public HttpStatus deleteOneV2(@PathVariable("id") Long id, @AuthenticationPrincipal MemberDetails memberDetails) {
         boardService.deleteOneV2(id, memberDetails.getMember());
         return HttpStatus.OK;
     }
 
-    @PatchMapping("/update/{id}") // 수정
+    @PatchMapping("/{id}") // 수정
     public ResponseEntity<Void> updateBoard(@PathVariable("id") Long id, @RequestBody BoardRequestDto boardRequestDto, @AuthenticationPrincipal MemberDetails memberDetails) {
         boardService.updateBoard(id, boardRequestDto, memberDetails.getMember());
         return ResponseEntity.status(201).build();

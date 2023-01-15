@@ -17,9 +17,11 @@ public enum ExceptionStatus {
 
     USER_IS_NOT_EXIST(404, " 존재하지 않는 회원입니다. "),
     BOARD_IS_NOT_EXIST(404, " 해당 게시물이 존재하지 않습니다. "),
+    COMMENT_IS_NOT_EXIST(404, " 해당 게시물이 존재하지 않습니다. "),
 
     // 409 ->  CONFLICT : 중복 데이터 (ex. 이미 중복된 값)
     USER_EMAIL_IS_EXIST(409, " 이미 사용중인 아이디입니다. 다시 확인해주세요 "),
+    USER_RECOMMEND_IS_EXIST(409, " 이미 좋아요를 누르셨습니다. "),
 
     // 500 -> INTERNAL SERVER ERROR : 서버에러
     ERROR_BY_TOKEN(500," 토큰 문제가 발생했습니다. 관리자에게 문의하세요" );

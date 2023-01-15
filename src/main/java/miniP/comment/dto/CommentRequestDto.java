@@ -19,6 +19,7 @@ public class CommentRequestDto {
                 .comment(this.getComment())
                 .member(member)
                 .board(board)
+                .recommendCount(0L)
                 .build();
     }
 

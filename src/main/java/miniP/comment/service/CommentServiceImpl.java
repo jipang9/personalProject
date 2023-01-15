@@ -7,8 +7,10 @@ import miniP.comment.dto.CommentRequestDto;
 import miniP.comment.dto.CommentResponseDto;
 import miniP.comment.entity.Comment;
 import miniP.comment.repository.CommentRepository;
+import miniP.exception.ExceptionStatus;
 import miniP.exception.board.NotFoundBoardException;
 import miniP.exception.comment.NotFoundCommentException;
+import miniP.exception.member.CustomException;
 import miniP.member.entity.Member;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,7 +58,7 @@ public class CommentServiceImpl implements CommentService{
     }
 
     @Override
-    public void deleteCommentsByBoardV2(Board board) {
+    public void deleteCommentsByBoardV2(Board board) { // 관호님 버전
         commentRepository.deleteAllByBoard(board);
     }
 
@@ -70,4 +72,9 @@ public class CommentServiceImpl implements CommentService{
         return commentRepository.findCommentByBoardId(id);
     }
 
+    @Override
+    public Comment getComment(Long id) {
+        Comment comment = commentRepository.findById(id).orElseThrow(() -> new CustomException(ExceptionStatus.COMMENT_IS_NOT_EXIST));
+        return comment;
+    }
 }

@@ -13,15 +13,16 @@ import java.util.List;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
-
     @Query("select c from Comment c where c.board.id=:id")
     List<CommentResponseDto> findCommentByBoardId(@Param("id")Long id);
 
     @Query("select count(c.member.id) from Comment c where c.board.id=:id ")
     Long countCommentByBoardId(@Param("id")Long id);
 
-//    @Query("delete  from Comment  c where c.board=:board") // 관호님께 여쭤보기
-    void deleteAllByBoard(Board board);
+    @Modifying
+    @Transactional
+    @Query("delete  from Comment  c where c.board=:board") // 관호님께 여쭤보기
+    void deleteAllByBoard(@Param("board") Board board);
 
     @Modifying
     @Transactional
@@ -30,5 +31,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     @Query("select c.id from Comment c where c.board.id=:boardId")
     List<Long> findAllByBoardId(@Param("boardId") Long boardId); // 커맨트 id 들고오기 위함
+
+
 
 }

@@ -18,6 +18,7 @@ public class BoardRequestDto {
                 .title(this.getTitle())
                 .content(this.getContent())
                 .member(member)
+                .recommendCount(0L)
                 .build();
         return board;
     }

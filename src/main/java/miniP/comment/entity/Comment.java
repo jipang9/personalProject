@@ -29,8 +29,8 @@ public class Comment {
     @JoinColumn(name = "member_id")
     private Member member;
 
-
-
+    @Column(nullable = false)
+    private Long recommendCount;
 
 
     public void isWrite(Comment comment, String user) {

@@ -17,6 +17,7 @@ public class BoardResponseDto { // getOne
     private final String content;
     private final String writer;
     private final List<CommentResponseDto> commentList;
+    private final Long recommendCount;
     private final LocalDateTime createTime;
     private final LocalDateTime modDateTime;
 
@@ -29,6 +30,7 @@ public class BoardResponseDto { // getOne
         this.createTime = board.getCreateDate();
         this.modDateTime = board.getModDate();
         this.commentList =comments;
+        this.recommendCount = board.getRecommendCount();
     }
 
     public static BoardResponseDto of(Board board, List<CommentResponseDto> comments) {
