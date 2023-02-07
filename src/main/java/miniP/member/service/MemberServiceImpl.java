@@ -26,7 +26,7 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     @Override
     public void signup(signupRequestDto signupRequestDto) {
-        checkByMemberDuplicated(signupRequestDto.getUsername()); // 해당 궁금증이 생긴 부분
+        checkByMemberDuplicated(signupRequestDto.getUsername());
         Member member = signupRequestDto.toEntity(passwordEncoder.encode(signupRequestDto.getPassword()));
         memberRepository.save(member);
     }

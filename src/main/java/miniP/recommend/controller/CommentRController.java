@@ -14,10 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/recommend/comment")
-public class CommentController {
+public class CommentRController {
 
     private final RecommendService recommendService;
-
 
     @PostMapping("/{id}")
     public ResponseEntity<Void> recommendUp(@PathVariable("id") Long id, @AuthenticationPrincipal MemberDetails memberDetails){

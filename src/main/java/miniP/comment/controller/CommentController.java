@@ -3,20 +3,17 @@ package miniP.comment.controller;
 
 import lombok.RequiredArgsConstructor;
 import miniP.comment.dto.CommentRequestDto;
-import miniP.comment.dto.CommentResponseDto;
 import miniP.comment.service.CommentService;
 import miniP.security.member.MemberDetails;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/comments")
 public class CommentController {
+
     private final CommentService commentService;
 
     @PostMapping("/post/{id}")

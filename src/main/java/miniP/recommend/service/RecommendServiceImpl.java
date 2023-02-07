@@ -1,6 +1,6 @@
 package miniP.recommend.service;
 
-
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import miniP.board.entity.Board;
 import miniP.board.service.BoardService;
@@ -10,12 +10,10 @@ import miniP.exception.ExceptionStatus;
 import miniP.exception.member.CustomException;
 import miniP.member.entity.Member;
 import miniP.recommend.entity.BoardRecommend;
-import miniP.recommend.repository.CommentRecommendRepository;
 import miniP.recommend.repository.BoardRecommendRepository;
+import miniP.recommend.repository.CommentRecommendRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -54,4 +52,5 @@ public class RecommendServiceImpl implements RecommendService {
     public void upRecommendByComment(Long id, Member member) {
         Comment comment = commentService.getComment(id);
     }
+
 }

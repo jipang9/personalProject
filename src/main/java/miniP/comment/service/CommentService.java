@@ -25,6 +25,6 @@ public interface CommentService {
 
     List<CommentResponseDto> comments(Long id); // 댓글 여러개 찾아오기
 
-    Comment getComment(Long id);
+    Comment getComment(Long id); // 수정해라 김지환
 
 }

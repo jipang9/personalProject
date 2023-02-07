@@ -44,7 +44,6 @@ public class Board extends BaseEntity {
 
     public void minusRecommendCount(){
         this.recommendCount = recommendCount-1;
-
     }
 
     public void isWrite(String username) throws RuntimeException {

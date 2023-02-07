@@ -21,13 +21,15 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     @Modifying
     @Transactional
-    @Query("delete  from Comment  c where c.board=:board") // 관호님께 여쭤보기
-    void deleteAllByBoard(@Param("board") Board board);
+    @Query("delete  from Comment  c where c.board=:board")
+    void deleteAllByBoard(@Param("board") Board board); // comment가 board를
 
     @Modifying
     @Transactional
     @Query("delete from Comment c where c.id in :id")
     void deleteAllByBoardIds(@Param("id") List<Long> id); // update 벌크연산시 아마 clearAuthmatically 속성을 true로 바꿔줘야 할 듯.
+    // nativequery ( message보기..) // batchsize 늘리기. // 처리 단위를 정하자
+
 
     @Query("select c.id from Comment c where c.board.id=:boardId")
     List<Long> findAllByBoardId(@Param("boardId") Long boardId); // 커맨트 id 들고오기 위함

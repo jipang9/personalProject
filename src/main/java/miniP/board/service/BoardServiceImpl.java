@@ -8,6 +8,7 @@ import miniP.board.dto.BoardsResponseDto;
 import miniP.board.entity.Board;
 import miniP.board.repository.BoardRepository;
 import miniP.comment.dto.CommentResponseDto;
+import miniP.comment.entity.Comment;
 import miniP.comment.service.CommentService;
 import miniP.exception.ExceptionStatus;
 import miniP.exception.board.NotFoundBoardException;
@@ -30,8 +31,11 @@ import java.util.List;
 public class BoardServiceImpl implements BoardService {
 
     private final BoardRepository boardRepository;
-    private final MemberRepository memberRepository;
+    private final MemberRepository memberRepository; // memberservice
     private final CommentService commentService;
+
+    // 의존성 보드입장에서 -> comment 모른다.  ( ex : 삭제 ),
+    // 접근 루트 // 단일책임. //
 
     @Transactional
     @Override
@@ -54,17 +58,17 @@ public class BoardServiceImpl implements BoardService {
     public void deleteOne(Long id, Member member) {
         Board board = boardRepository.findById(id).orElseThrow(() -> new NotFoundBoardException()); // 해당 게시물
         board.isWrite(member.getUsername()); // 작성자 체크
-        commentService.deleteCommentsByBoard(board.getId()); // comment 삭제
+        commentService.deleteCommentsByBoard(board.getId()); // comment 삭제 // V2에 비해 쿼리가 한방 더 나갈 수 밖에 없음 -> List를 순회
         boardRepository.deleteById(id);
     }
 
     @Override
     @Transactional // 게시물 삭제 -> board entity를 넘기자.
     public void deleteOneV2(Long id, Member member) {
-        Board board = boardRepository.findById(id).orElseThrow(() -> new NotFoundBoardException()); // 해당 게시물
-        board.isWrite(member.getUsername()); // 작성자 체크
-        commentService.deleteCommentsByBoardV2(board);
-        boardRepository.deleteById(id);
+        Board board = boardRepository.findById(id).orElseThrow(() -> new NotFoundBoardException()); // 해당 게시물 // 쿼리 한방
+        board.isWrite(member.getUsername()); // 작성자 체크 // 쿼리 두방
+        commentService.deleteCommentsByBoardV2(board);  // 쿼리 세방
+        boardRepository.deleteById(id); // 쿼리 막타
 
     }
 
@@ -94,7 +98,6 @@ public class BoardServiceImpl implements BoardService {
         }
         return resultList;
     }
-
 
     @Transactional // 게시물 수정
     @Override

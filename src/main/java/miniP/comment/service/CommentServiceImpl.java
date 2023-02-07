@@ -3,6 +3,7 @@ package miniP.comment.service;
 import lombok.RequiredArgsConstructor;
 import miniP.board.entity.Board;
 import miniP.board.repository.BoardRepository;
+import miniP.board.service.BoardService;
 import miniP.comment.dto.CommentRequestDto;
 import miniP.comment.dto.CommentResponseDto;
 import miniP.comment.entity.Comment;
@@ -32,6 +33,8 @@ public class CommentServiceImpl implements CommentService{
         Comment comment = commentRequestDto.toEntity(board, member);
         commentRepository.save(comment);
     }
+
+    // service에서 A entity를 받아왔을 때,  혹은 repository에서 가지고 오는
 
     @Transactional
     @Override
@@ -77,4 +80,5 @@ public class CommentServiceImpl implements CommentService{
         Comment comment = commentRepository.findById(id).orElseThrow(() -> new CustomException(ExceptionStatus.COMMENT_IS_NOT_EXIST));
         return comment;
     }
+
 }
